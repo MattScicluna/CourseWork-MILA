@@ -46,6 +46,7 @@
 \usepackage{bbm}
 \usepackage{graphicx}
 \usepackage{xcolor} % For color
+\usepackage{subcaption}
 
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
@@ -193,15 +194,15 @@ Given the class variable, the data are assumed to be Gaussians with different me
 	If we let
 	\begin{equation}
 	\beta_0=\begin{bmatrix}
-	 -\mu_0^T\Sigma^{-1}\mu_0 + ln(1-\pi)\\
-	\Sigma^{-1}\mu_0 \\
+	 -\frac{1}{2}\mu_0^T\Sigma^{-1}\mu_0 + ln(1-\pi)\\
+	-\Sigma^{-1}\mu_0 \\
 	\end{bmatrix}
 	\end{equation}
 	and
 	\begin{equation}
 	\beta_1=\begin{bmatrix}
-	-\mu_1^T\Sigma^{-1}\mu_1 + ln(\pi)\\
-	\Sigma^{-1}\mu_1 \\
+	-\frac{1}{2}\mu_1^T\Sigma^{-1}\mu_1 + ln(\pi)\\
+	-\Sigma^{-1}\mu_1 \\
 	\end{bmatrix}
 	\end{equation}
 	Then if we augment \(x\) to have a first component equal to one, we can rewrite (1.19) as
@@ -209,5 +210,32 @@ Given the class variable, the data are assumed to be Gaussians with different me
 	\frac{e^{\beta_1^Tx}}{e^{\beta_0^Tx}+e^{\beta_1^Tx}}
 	\end{align}
 	Which we recognize has the same form as a Logistic Regression.
+	Upon dividing by \(e^{\beta_1^Tx}\), we get that \(P(y=1 \mid x) = \sigma\left(\beta_0^Tx-\beta_1^Tx\right)\).
+	We notice that the decision boundary is linear in \(x\). to find it, we note that \(\sigma(z) = 0.5\) iff \(z = 0\), and so we solve for \(\beta_0^Tx-\beta_1^Tx = 0\). For \((x^1,x^2) \in \mathbb{R}^2\), this would be:
+	\begin{align}
+	x^2 = \frac{\beta_0^0-\beta_1^{0} + (\beta_0^{1}-\beta_1^{1})x^1}{\beta_0^{1}-\beta_1^{1}}
+	\end{align}
+	
+	Where \(\beta_i^T := (\beta_i^0, \beta_i^1)\). Evaluating the above using the MLE estimates for 3 datasets yields the following results.
+	\begin{figure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{img.png}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{img2.png}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{img3.png}
+	\end{subfigure}
+	\caption{Three different Datasets fit with MLE estimates from Mixture of Gaussian models. The seperating plane is in black, and contours from each gaussian are in red and blue.}
+	\end{figure}
+	
+\section{Logistic Regression}
+	We now implement logistic regression to learn an affine function \(f(x) = w^Tx+b\) using the IRLS algorithm applied on each of the above datasets.
+	
+	
 	
 \end{document}
