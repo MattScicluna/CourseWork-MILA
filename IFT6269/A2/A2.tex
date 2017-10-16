@@ -233,7 +233,8 @@ Given the class variable, the data are assumed to be Gaussians with different me
 	\end{subfigure}
 	\caption{Three different Datasets fit with MLE estimates from Mixture of Gaussian models. The seperating plane is in black, and contours from each gaussian are in red and blue.}
 	\end{figure}
-	
+
+
 \section{Logistic Regression}
 	We now implement logistic regression to learn an affine function \(f(x) = w^Tx+b\) using the IRLS algorithm applied on each of the above datasets. The learning stopped when the norm of the difference of the parameters fell below 0.001. The estimated parameters are displayed in table 2.1. The corresponding decision boundary is presented in figure 2.1.
 	
@@ -243,9 +244,9 @@ Given the class variable, the data are assumed to be Gaussians with different me
 			\begin{tabular}{*5l}   
 			\toprule
 				\emph{Dataset}&  $b$ & $w_1$  & $w_2$\\\midrule
-				A & -0.604 & -3.802 & -3.935 \\ 
-				B & 0.744 & -1.622 & 0.933 \\
-				C & 1.342 & -2.330 & 0.711 \\\bottomrule
+				A & -2.05 & -11.5 & -19.2 \\ 
+				B & 1.29 & -1.62 & 0.96 \\
+				C & 0.95 & -2.08 & 0.65 \\\bottomrule
 				\hline
 			\end{tabular}
 		\end{center}
@@ -276,9 +277,9 @@ Given the class variable, the data are assumed to be Gaussians with different me
 			\begin{tabular}{*5l}   
 				\toprule
 				\emph{Dataset}&  $b$ & $w_1$  & $w_2$\\\midrule
-				A & 0.464 & -0.206 & -0.211 \\ 
-				B & 0.499 & -0.105 & 0.062 \\
-				C & -0.130 & -0.016 & 0.540 \\\bottomrule
+				A & 0.492 & -0.373 & -0.264 \\ 
+				B & 0.50 & -0.104 & 0.0518 \\
+				C & 0.508 & -0.128 & -0.017 \\\bottomrule
 				\hline
 			\end{tabular}
 		\end{center}
@@ -300,28 +301,110 @@ Given the class variable, the data are assumed to be Gaussians with different me
 	\caption{Three different Datasets fit with the Linear Regression model. The seperating plane is in black.}
 \end{figure}
 
+\newpage
+
 \section{Comparing the Approaches}
 We compute the misclassification error on the training and test data.
 The results are presented in table 4.1.
+
 	\begin{table}
 		\caption {Test error for the models applied to the datasets, with ground truth values in brackets} \label{tab:title} 
 		\begin{center}		
 			\begin{tabular}{*5l}   
 				\toprule
-				Dataset &  MoG & Logistic & Linear
+				Dataset &  LDA & Logistic & Linear
 				\\\midrule
-				A & 0.02 (0.026) & 0.027 (0.017) & 0.027 (0.016) \\ 
-				B & 0.03 (0.0415) & 0.023 (0.038) & 0.03 (0.0415) \\
-				C & 0.0387 (0.0387) & 0.026 (0.026) & 0.043 (0.043) \\\bottomrule
+				A & 0.035 (0.013) & 0.029 (0.0067) & 0.0207 (0.0133) \\ 
+				B & 0.0415 (0.03) & 0.043 (0.02) & 0.0415 (0.03) \\
+				C & 0.039 (0.0575) & 0.0237 (0.0425) & 0.0423 (0.055) \\\bottomrule
 				\hline
 			\end{tabular}
 		\end{center}
 	\end{table}
 
-(b) Compare the performances of the different methods on the three datasets. Is the misclas-
-siffication error larger, smaller, or similar on the training and test data? Why? Which
-methods yield very similar/dissimilar results ? Which methods yield the best results on
-the different datasets ? Provide an interpretation.
-	
-	
+For Dataset A, the Logistic and Linear models outperformed the MoG model, since the LDA prior shifted probability away from the class \(Y=1\) (since only one third of training examples were in this class). The other two models, which did not take into account the class imbalance, performed better. For B, the models performed similarily. It should be noted that the MoG and Linear models had identical performances. This is because the linear model and MoG produce the same decision boundary when the number of sample points is identical between classes [1]. For C, the logistic classifier  outperformed the other classifiers. Dataset C contained a class which was itself a Mixture of Gaussians, a clear violation of the data distribution assumptions that the LDA model relies on, but the Logistic model does not. Specifically, the LDA tried to fit the Mixture distribution as a single Gaussian, which resulted in a clearly bad fit (see bottom image of figures 1.1 and 5.1).
+
+Generally, the misclassiffication error was smaller on the training versus the test data. This was expected, since the model parameters were fit to maximize the likelihood of the training data. Surprisingly, the test error for dataset C was lower than the training error.
+
+\section{QDA Model}
+
+	\begin{table}
+		\caption {QDA Parameter Values} \label{tab:title} 
+		\begin{center}		
+			\begin{tabular}{*6l}   
+				\toprule
+				\emph{Data}&  $\pi$ & $\mu_1$  & $\mu_2$ & $\Sigma_1$ & $\Sigma_2$ \\\midrule
+				A & 0.33 
+				& $\begin{bmatrix}2.89 \\ -0.89\end{bmatrix}$ 
+				& $\begin{bmatrix}-2.69 \\ 0.87\end{bmatrix}$ 
+				& $\begin{bmatrix}
+				2.31 & -1.05 \\
+				-1.05 & 0.576 \\ \end{bmatrix}$
+				& $\begin{bmatrix}
+				2.70 & -1.30 \\
+				-1.30 & 0.69 \\ \end{bmatrix}$			
+				\\ \\
+				B & 0.5 
+				& $\begin{bmatrix}3.34 \\ -0.835\end{bmatrix}$ 
+				& $\begin{bmatrix}-3.22 \\ 1.083\end{bmatrix}$ 
+				& $\begin{bmatrix}
+				2.54 & 1.064 \\
+				1.064 & 2.96 \\ \end{bmatrix}$
+				& $\begin{bmatrix}
+				4.15 & -1.33 \\
+				-1.33 & 0.516 \\ \end{bmatrix}$			
+				\\ \\
+				C & 0.625
+				& $\begin{bmatrix}2.79 \\ -0.838\end{bmatrix}$ 
+				& $\begin{bmatrix}-2.94 \\ -0.958\end{bmatrix}$ 
+				& $\begin{bmatrix}
+				2.90 & 1.25 \\
+				1.25 &  2.92 \\ \end{bmatrix}$
+				& $\begin{bmatrix}
+				2.87 & -1.76 \\
+				-1.76 & 6.56 \\ \end{bmatrix}$			
+				\\\bottomrule
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
+
+\begin{figure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{img_A_MoG_dm.png}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{img_B_MoG_dm.png}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{img_C_MoG_dm.png}
+	\end{subfigure}
+	\caption{Three different Datasets fit with the QDA model. The seperating conic is in black.}
+\end{figure}
+
+The estimated parameters for QDA are presented in table 5.1, and the misclassification error is presented in table 5.2.
+As before, the error rate is higher then the test rate. The error rate is similar between QDA and LDA for dataset A. This was expected since the data generating distribution had a common covariance, and so the estimated \(\Sigma\)'s for each cluster were nearly identical, anyways. For datasets B and C, the QDA model had the lowest error rate. This makes sense since the true data generating distribution was a Mixture of Gaussians (with different \(\Sigma\)'s) 
+
+	\begin{table}
+		\caption {Test error for the QDA model applied to the datasets, with ground truth values in brackets} \label{tab:title} 
+		\begin{center}		
+			\begin{tabular}{*5l}   
+				\toprule
+				 A & B & C
+				\\\midrule
+				 0.0273 (0.013) & 0.02 (0.013) & 0.036 (0.05) \\\bottomrule
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
+
+\newpage
+
+\section{References}
+[1] Hastie, T, Elements of Statistical Learning pg 100.
+
+
 \end{document}
