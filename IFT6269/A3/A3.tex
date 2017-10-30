@@ -205,6 +205,7 @@ We notice that if we set $X \sim Bern\left(\frac{1}{2}\right)$, $Y \sim Bern\lef
 \section{Flipping a covered edge in a DGM}
 Let $G = (V, E)$ be a DAG. We say that a directed edge $(i, j) \in E$ is a covered edge if and only
 if $\pi_j = \pi_i \cup \{i\}$. Let $G' = (V, E')$, with $E' = (E-\{(i, j)\}) \cup \{(j, i)\}$. Prove that $\mathcal{L}(G) = \mathcal{L}(G')$.
+\\
 
 PROOF: Fix $i,j, G$ and $E$. Denote \(\pi'_k\) as the set of parents for a node $k$ under $E'$. We note that \(\pi'_k = \pi_k\) for \(k\ne i,j\) and \(\pi'_i = \pi_i \cup \{j\}\) and \(\pi'_j = \pi_i\).
 
@@ -231,5 +232,55 @@ And (4.5) and (4.8) complete the proof.
 
 \section{Equivalence of directed tree DGM with undirected tree UGM}
 
+Let \(G\) be a directed tree and \(G'\) be its corresponding undirected tree. Prove that $\mathcal{L}(G) = \mathcal{L}(G')$.
+\\
+
+PROOF: For the forward direction we set the edge potentials \(\psi_{(i,j)}(x_i,x_j) = P(x_j|x_i)\). For the node potentials we set \(\psi_r(x_r) = P(x_r)\), where \(x_r\) is the root of the tree, and 1 for the rest. It is clear that 
+\begin{align*}
+P(x_v)=\prod_{i \in V} P(x_i | x_{\pi_i})=\psi_r(x_r)\prod_{(\pi_i,i)\in E}\psi_{(\pi_i,i)}(x_{\pi_i}, x_i)
+\end{align*}
+ We note that $Z=1$ since
+\begin{align*}
+Z&=\sum_{x_v}\psi_r(x_r)\prod_{(\pi_i,i)\in E}\psi_{(\pi_i,i)}(x_{\pi_i}, x_i)\\
+&=\sum_{x_r}\psi_r(x_r)\prod_{(\pi_i,i)\in E}\sum_{x_i}\psi_{(\pi_i,i)}(x_{\pi_i}, x_i) \\
+&=\sum_{x_r}P(x_r)\prod_{(\pi_i,i)\in E}\sum_{x_i}P(x_i | x_{\pi_i}) = 1
+\end{align*}
+
+For the reverse direction, TBD
+
+\newpage
+
+\section{Hammersley-Clifford Counter example}
+
+Given $P(0,0,0,0)=P(1,0,0,0)=P(1,1,0,0)=P(1,1,1,0)=P(0,0,0,1)=P(0,0,1,1)=P(0,1,1,1)=P(1,1,1,1)=\frac{1}{8}$ and the following graph:
+
+\begin{tikzpicture}[auto, node distance = 1.5cm and 2cm, on grid, semithick, state/.style ={circle, top color = white, draw, text = black, minimum width=0.7cm}, sh/.style={shade, shading = axis, left color = gray, shading angle = 45}]
+\node[state, label = above:{$X_1$}] (A) {};
+\node[state, label = above:{$X_2$}] (B) [right = of A] {};
+\node[state, label = below:{$X_3$}] (C) [below = of B] {};
+\node[state, label = below:{$X_4$}] (D) [left = of C] {};
+\path (A) edge node {} (B)
+(B) edge node {} (C)
+(C) edge node {} (D)
+(D) edge node {} (A);          
+\end{tikzpicture}
+
+We want to show that \(p \notin \mathcal{L}(G)\).
+\\
+
+PROOF: Suppose \(p \in \mathcal{L}(G)\), then there are \(\psi\) potentials such that \begin{align*}
+P(x_1,x_2,x_3,x_4)=\psi_{x_1,x_2}(x_1,x_2)\psi_{x_2,x_3}(x_2,x_3)\psi_{x_3,x_4}(x_3,x_4)\psi_{x_4,x_1}(x_4,x_1)
+\end{align*}
+
+Notice that $P(0,1,0,0)=0$ implies that at least one of the following must be $0$:
+$\psi_{x_1,x_2}(0,1)$,
+$\psi_{x_2,x_3}(1,0)$,
+$\psi_{x_3,x_4}(0,0)$,
+$\psi_{x_4,x_1}(0,0)$
+\\
+
+We notice that if $\psi_{x_1,x_2}(0,1)=0$ then $P(0,1,1,1)=0$ which contradicts that $P(0,1,1,1)=\frac{1}{8}$. Similarily, if $\psi_{x_2,x_3}(1,0)=0$ then $P(1,1,0,0)=0$, contradicting that it is \(\frac{1}{8}\). The same reasoning shows why $\psi_{x_3,x_4}(0,0) \ne 0$. Finally, if $\psi_{x_4,x_1}(0,0)=0$ then $P(0,0,0,0)=0$, which again is a contradiction.
+
+\label{key}
 
 \end{document}
