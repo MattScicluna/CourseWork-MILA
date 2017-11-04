@@ -246,7 +246,7 @@ Z&=\sum_{x_v}\psi_r(x_r)\prod_{(\pi_i,i)\in E}\psi_{(\pi_i,i)}(x_{\pi_i}, x_i)\\
 &=\sum_{x_r}P(x_r)\prod_{(\pi_i,i)\in E}\sum_{x_i}P(x_i | x_{\pi_i}) = 1
 \end{align*}
 
-For the reverse direction, TBD
+For the reverse direction,
 
 \newpage
 
@@ -282,5 +282,164 @@ $\psi_{x_4,x_1}(0,0)$
 We notice that if $\psi_{x_1,x_2}(0,1)=0$ then $P(0,1,1,1)=0$ which contradicts that $P(0,1,1,1)=\frac{1}{8}$. Similarily, if $\psi_{x_2,x_3}(1,0)=0$ then $P(1,1,0,0)=0$, contradicting that it is \(\frac{1}{8}\). The same reasoning shows why $\psi_{x_3,x_4}(0,0) \ne 0$. Finally, if $\psi_{x_4,x_1}(0,0)=0$ then $P(0,0,0,0)=0$, which again is a contradiction.
 
 \label{key}
+
+\newpage
+
+\section{Implementation: EM and Gaussian mixtures}
+
+\subsection{K-means algorithm}
+
+We implement the K-means algorithm. The results were somewhat consistent between restarts, varying by around one unit. Typically the algorithm converged in around 10 steps and the ojective function (average squared distance from each points assigned cluster center) was around 6.5. To account for the discrepencies we ran averaged over a couple restarts and used this to initialize the EM Algorithm in the next section. The estimated cluster centers are presented in table 1. The results are presented in figure 1.
+
+\begin{figure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{K_means_img.png}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{EM_Spherical_img.png}
+	\end{subfigure}
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{EM_General_img.png}
+	\end{subfigure}
+	\caption{Data fit using K-Means (top left) and Mixture of Gaussians with spherical covariance (top right) and general covariance (bottom left).The data is colored with the class prediction and the contours of the distribution are plotted. The cluster centers are marked as stars.}
+\end{figure}
+
+	\begin{table}
+		\caption {Cluster centers for K-Means} \label{tab:title} 
+		\begin{center}		
+			\begin{tabular}{*5l}   
+				\toprule
+				Cluster 1 & Cluster 2 & Cluster 3 & Cluster 4
+				\\\midrule
+				$[3.8, 5.0]$ & $[-3.8, -4.2]$ & $[3.5,-2.9]$ & $[-2.1, 4.0]$ \\\bottomrule
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
+	
+	
+\subsection{Gaussian mixture model with Spherical Covariance}
+
+	\begin{table}
+		\caption {Parameter Values for GMM with Spherical Covariance} \label{tab:title} 
+		\begin{center}		
+			\begin{tabular}{*6l}   
+				\toprule
+				\emph{Cluster}&  $\pi_k$ & $\mu_k$ & $\Sigma_k$\\\midrule
+				1 & 0.265 
+				& $\begin{bmatrix}3.55 \\ -2.78\end{bmatrix}$  
+				& $\begin{bmatrix}
+				2.95 & 0 \\
+				0 & 2.95 \\ \end{bmatrix}$\\
+				2 & 0.242 
+				& $\begin{bmatrix}3.44 \\ 4.92\end{bmatrix}$ 
+				& $\begin{bmatrix}
+				4.25 & 0 \\
+				0 & 4.25 \\ \end{bmatrix}$\\
+				3 & 0.279
+				& $\begin{bmatrix}-3.56 \\ -3.94\end{bmatrix}$ 
+				& $\begin{bmatrix}
+				4.65 & 0 \\
+				0 &  4.65 \\ \end{bmatrix}$\\	
+				4 & 0.214
+				& $\begin{bmatrix}-2.33 \\4.22 \end{bmatrix}$ 
+				& $\begin{bmatrix}
+				2.29 & 0 \\
+				0 &  2.29 \\ \end{bmatrix}$	
+				\\\bottomrule
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
+
+The next model we trained the data on was a GMM with covariance restricted to be a multiple of the identity. We initialized the means using the centers found in K-Means, and the class covariances and marginals using the sample covariance and assignment proportions respectively. To find the M-step updates we optimize the following objective function:
+\begin{align*}
+f(q_{t+1},\theta) &= \sum_{i=1}^{n}\sum_{j=1}^{k}\tau_{ij}^{t}log(P(x_i \mid \mu_j, \sigma_j)) + log\pi_j^t\\
+&=  \sum_{i=1}^{n}\sum_{j=1}^{k}\tau_{ij}^{t}\left[ C-\frac{1}{2}log(\sigma_j^2)-\frac{1}{2\sigma_j^2}(x_i-\mu_j)^T(x_i-\mu_j) + log\pi_j^t\right]
+\end{align*}
+where \(\theta=(\pi_j, \mu_j, \sigma_j)\) and \(C\) is a constant.
+
+To find \(\pi_j\) subject to the contraint \(\sum_{j=1}^k \pi_j = 1\) We use the method of Lagrange Multipliers. We look for any stationary points
+\begin{align}
+\frac{\partial}{\partial \pi_j}f(q_{t+1},\theta) + \lambda\left(1-\sum_{j=1}^k \pi_j\right) &= \frac{1}{\pi_j^t}\sum_{i=1}^{n}\tau_{ij}^{t} + \lambda = 0 \\
+&\Rightarrow \pi_j = \frac{\sum_{i=1}^{n}\tau_{ij}^{t}}{\lambda}
+\end{align}
+And substituting (7.2) and solving for \(\lambda\) yields
+\begin{align}
+\frac{\partial}{\partial \lambda}f(q_{t+1},\theta) + \lambda\left(1-\sum_{j=1}^k \pi_j\right) &= 1-\sum_{j=1}^k \pi_j \\
+&= 1 - \frac{\sum_{j=1}^{k}\sum_{i=1}^{n}\tau_{ij}^{t}}{\lambda}=0\\
+&\Rightarrow \lambda = \sum_{j=1}^{k}\sum_{i=1}^{n}\tau_{ij}^{t} = n
+\end{align}
+and so \(\pi_j= \frac{\sum_{i=1}^{n}\tau_{ij}^{t}}{n}\). Solving for \(\mu_j\)
+\begin{align}
+\frac{\partial}{\partial \mu_j}f(q_{t+1},\theta) &= -\frac{1}{2\sigma_j^2}\sum_{i=1}^n \tau_{ij}^{t}(x_i - \mu_j) = 0 \\
+&\Rightarrow \sum_{i=1}^n \tau_{ij}^{t}x_i - \sum_{i=1}^n\tau_{ij}^{t}\mu_j = 0\\
+&\Rightarrow \mu_j = \frac{\sum_{i=1}^n \tau_{ij}^{t}x_i}{\sum_{i=1}^n\tau_{ij}^{t}}
+\end{align}
+
+Finally, solving for \(\sigma_j\)
+\begin{align}
+\frac{\partial}{\partial \sigma_j}f(q_{t+1},\theta) &= -\frac{1}{2\sigma_j^2}\sum_{i=1}^n \tau_{ij}^{t} + \frac{1}{2(\sigma_j^2)^2}\sum_{i=1}^n \tau_{ij}^{t}(x_i-\mu_j)^T(x_i-\mu_j)=0\\
+&\Rightarrow \sum_{i=1}^n \tau_{ij}^{t} = \frac{1}{\sigma_j^2}\sum_{i=1}^n \tau_{ij}^{t}(x_i-\mu_j)^T(x_i-\mu_j) \\
+&\Rightarrow \sigma_j^2 = \frac{\sum_{i=1}^n \tau_{ij}^{t}(x_i-\mu_j)^T(x_i-\mu_j)}{\sum_{i=1}^n \tau_{ij}^{t}}
+\end{align}
+
+Using these updates we get the parameters displayed in table 2.
+
+\subsection{Gaussian mixture model with General Covariance}
+
+The final model we trained the data on was a GMM without the covariance restriction. Again, we initialized the parameters as before. Using parameter updates from class, we get the parameter values shown in table 3.
+
+	\begin{table}
+		\caption {Parameter Values for GMM with General Covariance} \label{tab:title} 
+		\begin{center}		
+			\begin{tabular}{*6l}   
+				\toprule
+				\emph{Cluster}&  $\pi_k$ & $\mu_k$ & $\Sigma_k$\\\midrule
+				1 & 0.24
+				& $\begin{bmatrix} 3.99 \\ 4.18\end{bmatrix}$  
+				& $\begin{bmatrix}
+				0.20 & 0.22 \\
+				0.22 & 10.37 \\ \end{bmatrix}$\\
+				2 & 0.25 
+				& $\begin{bmatrix}-2.03 \\ 4.16\end{bmatrix}$ 
+				& $\begin{bmatrix}
+				2.92 & 0.18 \\
+				0.18 & 2.78 \\ \end{bmatrix}$\\
+				3 & 0.20
+				& $\begin{bmatrix}3.80 \\ -3.63\end{bmatrix}$ 
+				& $\begin{bmatrix}
+				0.86 & 0.054 \\
+				0.054 &  2.22 \\ \end{bmatrix}$\\	
+				4 & 0.304
+				& $\begin{bmatrix}-3.09 \\-3.56 \end{bmatrix}$ 
+				& $\begin{bmatrix}
+				6.12 & 5.93 \\
+				5.93 &  6.06 \\ \end{bmatrix}$	
+				\\\bottomrule
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
+
+\subsection{results}
+
+We noticed that the results changed during each run, as was expected. For the shperical covariance model, we found that the variation in runs was greater, possibly because the model was not correct (since the data was certainly not from a Gaussian with this kind of covariance structure). So the optimums were certainly local (and so the algorithm was more sensitive to the K-means initializations). The general covariance structure looked like it was the true distribution, and so the optimum reached may have been a global. The normalized log-likelihoods are presented in table 4. Notice that the log likelihood for the spherical Covariance structure was smaller then the general structure since it was more restrictive, and that the test was smaller since the model was specifically trained to maximize the log likelihood of the training data.
+
+	\begin{table}
+		\caption {Cluster centers for K-Means} \label{tab:title} 
+		\begin{center}		
+			\begin{tabular}{*5l}   
+				\toprule
+				GMM Spherical Cov & GMM General Cov
+				\\\midrule
+				-5.388 (-5.29) & -4.82 (-4.65) \\\bottomrule
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
 
 \end{document}
