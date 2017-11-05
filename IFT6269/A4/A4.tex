@@ -1,0 +1,143 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size 
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{sectsty} % Allows customizing section commands
+%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+\usepackage{bbm}
+\usepackage{graphicx}
+\usepackage{xcolor} % For color
+\usepackage{subcaption}
+\usepackage{booktabs}
+
+\usepackage{tikz} % For graphs
+\usetikzlibrary{positioning}
+\usetikzlibrary{calc}
+
+\usepackage{enumerate} % For lettered enumeration
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Assignment Four \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{
+	Matthew C.~Scicluna\\
+	D\'epartement d'Informatique et de Recherche Op\'erationnelle\\
+	Universit\'e de Montr\'eal\\
+	Montr\'eal, QC H3T 1J4 \\
+	\texttt{matthew.scicluna@umontreal.ca}
+}
+
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+\section{Entropy and Mutual Information}
+	Let \(X\) be a discrete random variable on a finite space \(\mathcal{X}\) with \(|\mathcal{X}| = k\).
+\begin{enumerate} 
+	\item\begin{enumerate}[(a)]
+		\item Prove that the entropy \(H(X)\ge0\), with equality only when X is a constant.
+		
+		PROOF: WLOG we can assume that \(p(x)>0 \ \forall x\in\mathcal{X}\), (using that \(0\cdot log0 = 0\)). We have that \(H(X) = -\sum_{x} p(x)logp(x) = \sum_{x} p(x)logp(x)^{-1}\ge0\), since \(p(x)>0\) and \(p(x)^{-1} \ge 1\). If \(H(X)=0\) then \(\exists \alpha\) such that \(p(\alpha)^{-1}=1 \Rightarrow p(\alpha)=1\). Hence \(X\) must be a constant, as needed.
+		\item Let \(X \sim p\) and \(q\) be the Uniform distribution on \(\mathcal{X}\). What is the relation between \(D(p||q)\) and \(H(X)\).
+		
+		CLAIM: \(D(p||q) = -H(X) + logk\)
+		
+		PROOF: 
+		\begin{align*}
+		D(p||q)&=\sum_{x}p(x)log\frac{p(x)}{q(x)}\\
+		&=\sum_{x}p(x)logp(x)-\sum_xp(x)logq(x)\\
+		&= -H(X) + \sum_xp(x)logk \\
+		&= -H(x) + logk
+		\end{align*}
+		\item An upper bound for \(H(X)\) is \(logk\) since \(H(X)=logk-D(p||q) \Rightarrow H(X) \le logk \).
+		\end{enumerate}
+		We consider a pair of discrete random variables \((X_1,X_2)\) defined over the finite set \(\mathcal{X}_1\times\mathcal{X}_2\).
+		Let \(p_{1,2}\), \(p_1\) and \(p_2\) denote respectively the joint distribution, the marginal distribution of \(X_1\) and the marginal distribution of \(X_2\). Define the mutual information as:
+		\begin{align*}
+		I(X_1,X_2)=\sum_{(x_1,x_2)\in\mathcal{X}_1\times\mathcal{X}_2}p_{1,2}(x_1,x_2)log\frac{p_{1,2}(x_1,x_2)}{p_1(x_1)p_2(x_2)}
+		\end{align*}
+		We again assume WLOG that \(p(x_1,x_2)>0 \ \forall (x_1,x_2)\in\mathcal{X}_1\times\mathcal{X}_2\)
+		
+	\item\begin{enumerate}[(a)]
+		\item CLAIM: \(I(X_1,X_2)\ge 0\)
+		
+		PROOF: Notice that \(I(X_1,X_2) = D(p_{1,2}||p_1p_2) \ge 0\) by the positiveness of \(D(\cdot||\cdot)\).
+		
+		\item We want to express  \(I(X_1,X_2)\) as a function of \(H(X_1), H(X_2)\) and \(H(X_1,X_2)\).
+		\begin{align*}
+		I(X_1,X_2) &= \sum_{(x_1,x_2)\in\mathcal{X}_1\times\mathcal{X}_2}p_{1,2}(x_1,x_2)log\frac{p_{1,2}(x_1,x_2)}{p_1(x_1)p_2(x_2)} \\
+		&=\sum_{(x_1,x_2)\in\mathcal{X}_1\times\mathcal{X}_2}p_{1,2}(x_1,x_2)logp_{1,2}(x_1,x_2)-p_{1,2}(x_1,x_2)logp_1(x_1)p_2(x_2)\\
+		&=-H(X_1,X_2) - \sum_{(x_1,x_2)\in\mathcal{X}_1\times\mathcal{X}_2}\bigg( p_1(x_1)p_2(x_2)logp_1(x_1) - p_1(x_1)p_2(x_2)logp_2(x_2) \bigg) \\
+		&=-H(X_1,X_2) - \sum_{j=1}^{2}\sum_{(x_1,x_2)\in\mathcal{X}_1\times\mathcal{X}_2}p_1(x_1)p_2(x_2)logp_j(x_j)\\
+		&= -H(X_1,X_2) -\sum_{j=1}^{2}\sum_{x_j\in\mathcal{X}_j}p_j(x_j)logp_j(x_j)\\
+		&= -H(X_1,X_2) + H(X_1) + H(X_2)
+		\end{align*}
+		And so we can represent \(I(X_1,X_2)\) using \(H(X_1), H(X_2)\) and \(H(X_1,X_2)\), as needed.
+		\item From the previous result we have that \(I(X_1,X_2)\ge0 \Rightarrow H(X_1) + H(X_2) \ge H(X_1,X_2) \), and so the maximal entropy of \((X_1,X_2)\) is \(H(X_1) + H(X_2)\). By definition this only occurs when \(I(X_1,X_2)=0\), which only occurs if
+		\(p_{1,2}(x_1,x_2)=p_1(x_1)p_2(x_2) \ \forall x_1,x_2 \in \mathcal{X}_1\times\mathcal{X}_2\). This can be seen directly from the definition of \(I\) and using the strict positivity of \(p(x_1,x_2)\).
+		\end{enumerate}
+	\end{enumerate}
+
+\newpage
+
+\section{HMM -- Implementation}
+
+We use an HMM model to account for the possible temporal structure of some data.
+We consider the following HMM model: the chain \((z_t)_{t=1}^T\) has \(K=4\) possible states, with an initial
+probability distribution \(\pi\in\Delta_4\) and a probability transition matrix \(A\in\mathbb{R}^{4\times4}\) where \(A_{ij} = p(z_t = i | z_{t-1} = j)\) and conditionally on the current state \(z_t\), we have observations obtained from Gaussian emission probabilities \(x_t |(z_t = k) \sim N(x_t |\mu_k , \Sigma_k )\).
+\end{document}
