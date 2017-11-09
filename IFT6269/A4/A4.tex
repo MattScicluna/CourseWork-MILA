@@ -189,8 +189,28 @@ To solve for \(\mu_k\) we look for stationary points
 
 To solve for \(\Sigma_k\) we look for stationary points. As in assignment 1, we take the derivative w.r.t \(\Sigma^{-1}_k\)
 \begin{align}
-\frac{\partial}{\partial \Sigma^{-1}_{k}} Q(\theta, \theta^{(s)}) &= \sum_{t=1}^{T}\left(\frac{\partial}{\partial \mu_{k}}\frac{-\gamma_{tk}}{2}(\bar{x}_t-\mu_k)^T\Sigma_k^{-1}(\bar{x}_t-\mu_k)-\frac{\gamma_{tk}}{2}log|\Sigma_k|\right) \\
+\frac{\partial}{\partial \Sigma^{-1}_{k}} Q(\theta, \theta^{(s)}) &= \sum_{t=1}^{T}\frac{\partial}{\partial \mu_{k}}\left(\frac{-\gamma_{tk}}{2}log|\Sigma_k| -\frac{\gamma_{tk}}{2}\left(\bar{x}_t-\mu_k^{(s+1)}\right)^T\Sigma_k^{-1}\left(\bar{x}_t-\mu_k^{(s+1)}\right)\right)
 \end{align}
 
+Differentiating the first term yields
+\begin{align}
+\frac{\partial}{\partial \Sigma^{-1}_{k}}\frac{-\gamma_{tk}}{2}log|\Sigma_k|
+&=\frac{\partial}{\partial \Sigma^{-1}_{k}}\frac{\gamma_{tk}}{2}log|\Sigma^{-1}_k|\\
+&=\frac{\gamma_{tk}}{2}\Sigma_k
+\end{align}
+
+Differentiating the second term yields
+\begin{align}
+&\frac{\partial}{\partial \Sigma^{-1}}\frac{\gamma_{tk}}{2}\left(\bar{x}_t-\mu_k^{(s+1)}\right)^T\Sigma_k^{-1}\left(\bar{x}_t-\mu_k^{(s+1)}\right)\\
+&=\frac{\partial}{\partial \Sigma^{-1}}\frac{\gamma_{tk}}{2}tr\left(\left(\bar{x}_t-\mu_k^{(s+1)}\right)\left(\bar{x}_t-\mu_k^{(s+1)}\right)^T\Sigma_k^{-1}\right)\\
+&= \frac{\gamma_{tk}}{2}\left(\bar{x}_t-\mu_k^{(s+1)}\right)\left(\bar{x}_t-\mu_k^{(s+1)}\right)^T
+\end{align}
+Where (2.15) and (2.16) come from results proved in class and on Homework 1. After substituting (2.14) and (2.17) into (2.12) and equating to 0 we have that:
+
+\begin{align}
+&\sum_{t=1}^{T}\gamma_{tk}\Sigma_k=\sum_{t=1}^{T}
+\gamma_{tk}\left(\bar{x}_t-\mu_k^{(s+1)}\right)\left(\bar{x}_t-\mu_k^{(s+1)}\right)^T\\
+&\Rightarrow \Sigma_k^{(s+1)} = \frac{\sum_{t=1}^{T}\gamma_{tk}(\bar{x}_t-\mu_k^{(s+1)})(\bar{x}_t-\mu_k^{(s+1)})^T}{\sum_{t=1}^{T}\gamma_{tk}}
+\end{align}
 
 \end{document}
