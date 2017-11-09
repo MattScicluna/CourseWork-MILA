@@ -246,7 +246,7 @@ Z&=\sum_{x_v}\psi_r(x_r)\prod_{(\pi_i,i)\in E}\psi_{(\pi_i,i)}(x_{\pi_i}, x_i)\\
 &=\sum_{x_r}P(x_r)\prod_{(\pi_i,i)\in E}\sum_{x_i}P(x_i | x_{\pi_i}) = 1
 \end{align*}
 
-For the reverse direction,
+For the reverse direction, we use that \(p\in\mathcal{L}(G')\) implies that \(p\) satisfies the Global Markov property. This implies that \(x_i \perp x_{nd(i)} \mid x_{\pi_i}\) for \(G\). This is because any path from \(x_i\) to \(x_{nd(i)}\) must pass through \(x_{\pi_i}\) since each node has at most one parent. Hence \(p \in \mathcal{L}(G)\), as needed.
 
 \newpage
 
@@ -319,41 +319,10 @@ We implement the K-means algorithm. The results were somewhat consistent between
 			\end{tabular}
 		\end{center}
 	\end{table}
-	
+
+\newpage
 	
 \subsection{Gaussian mixture model with Spherical Covariance}
-
-	\begin{table}
-		\caption {Parameter Values for GMM with Spherical Covariance} \label{tab:title} 
-		\begin{center}		
-			\begin{tabular}{*6l}   
-				\toprule
-				\emph{Cluster}&  $\pi_k$ & $\mu_k$ & $\Sigma_k$\\\midrule
-				1 & 0.23 
-				& $\begin{bmatrix}-2.25 \\ 4.19\end{bmatrix}$  
-				& $\begin{bmatrix}
-				2.44 & 0 \\
-				0 & 2.44 \\ \end{bmatrix}$\\
-				2 & 0.18 
-				& $\begin{bmatrix} 3.76 \\ 5.76\end{bmatrix}$ 
-				& $\begin{bmatrix}
-				2.91 & 0 \\
-				0 & 2.91 \\ \end{bmatrix}$\\
-				3 & 0.23
-				& $\begin{bmatrix}-4.09 \\ -4.5\end{bmatrix}$ 
-				& $\begin{bmatrix}
-				3.7 & 0 \\
-				0 &  3.7 \\ \end{bmatrix}$\\	
-				4 & 0.36
-				& $\begin{bmatrix}2.9 \\-2.04 \end{bmatrix}$ 
-				& $\begin{bmatrix}
-				4.83 & 0 \\
-				0 &  4.83 \\ \end{bmatrix}$	
-				\\\bottomrule
-				\hline
-			\end{tabular}
-		\end{center}
-	\end{table}
 
 The next model we trained the data on was a GMM with covariance restricted to be a multiple of the identity. We initialized the means using the centers found in K-Means, and the class covariances and marginals using the sample covariance and assignment proportions respectively. To find the M-step updates we optimize the following objective function:
 \begin{align*}
@@ -388,6 +357,37 @@ Finally, solving for \(\sigma_j\)
 \end{align}
 
 Using these updates we get the parameters displayed in table 2.
+\begin{table}
+	\caption {Parameter Values for GMM with Spherical Covariance} \label{tab:title} 
+	\begin{center}		
+		\begin{tabular}{*6l}   
+			\toprule
+			\emph{Cluster}&  $\pi_k$ & $\mu_k$ & $\Sigma_k$\\\midrule
+			1 & 0.23 
+			& $\begin{bmatrix}-2.25 \\ 4.19\end{bmatrix}$  
+			& $\begin{bmatrix}
+			2.44 & 0 \\
+			0 & 2.44 \\ \end{bmatrix}$\\
+			2 & 0.18 
+			& $\begin{bmatrix} 3.76 \\ 5.76\end{bmatrix}$ 
+			& $\begin{bmatrix}
+			2.91 & 0 \\
+			0 & 2.91 \\ \end{bmatrix}$\\
+			3 & 0.23
+			& $\begin{bmatrix}-4.09 \\ -4.5\end{bmatrix}$ 
+			& $\begin{bmatrix}
+			3.7 & 0 \\
+			0 &  3.7 \\ \end{bmatrix}$\\	
+			4 & 0.36
+			& $\begin{bmatrix}2.9 \\-2.04 \end{bmatrix}$ 
+			& $\begin{bmatrix}
+			4.83 & 0 \\
+			0 &  4.83 \\ \end{bmatrix}$	
+			\\\bottomrule
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
 
 \subsection{Gaussian mixture model with General Covariance}
 
