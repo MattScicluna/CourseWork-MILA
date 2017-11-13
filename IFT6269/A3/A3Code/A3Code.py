@@ -15,8 +15,8 @@ CLUSTER_MEANS_COLOR = ['pink', 'cyan', 'green', 'yellow']
 NUM_ITER = 100
 EPSILON = 1e-10
 
-train_data = np.loadtxt('hwk4data/' + FILES[0])
-test_data = np.loadtxt('hwk4data/' + FILES[1])
+train_data = np.loadtxt('hwk3data/' + FILES[0])
+test_data = np.loadtxt('hwk3data/' + FILES[1])
 
 
 def compute_loss(data, pi, mu, cov):
@@ -137,8 +137,53 @@ cov = cov_list[-1]
 pi = pi_list[-1]
 loss = losses[-1]
 
+def get_point_marker(data_point, ratios):
+    ratios = ratios.cumsum()
+    ret_val = list()
+    x = [0] + np.cos(np.linspace(0, 2 * np.pi * ratios[0], 10)).tolist()
+    y = [0] + np.sin(np.linspace(0, 2 * np.pi * ratios[0], 10)).tolist()
+    ret_val.append(list(zip(x, y)))
+    for k in range(len(ratios)-2):
+        x = [0] + np.cos(np.linspace(2 * np.pi * ratios[k], 2 * np.pi * ratios[k+1], 10)).tolist()
+        y = [0] + np.sin(np.linspace(2 * np.pi * ratios[k], 2 * np.pi * ratios[k+1], 10)).tolist()
+        ret_val.append(list(zip(x, y)))
+
+    x = [0] + np.cos(np.linspace(2 * np.pi * ratios[-2], 2 * np.pi, 10)).tolist()
+    y = [0] + np.sin(np.linspace(2 * np.pi * ratios[-2], 2 * np.pi, 10)).tolist()
+    ret_val.append(list(zip(x, y)))
+
+    for ind, ret in enumerate(ret_val):
+        plt.scatter(data_point[0], data_point[1], marker=(ret, 0), facecolor=MEANS_COLOR[ind])
+
+
 
 def plot_EM_means(mu, cov, resp, data, name, title):
+    plt.figure()
+
+    for ind in range(data.shape[0]):
+        get_point_marker(data[ind], resp[ind])
+
+    x = np.linspace(-10, 10)
+    y = np.linspace(-10, 10)
+    X, Y = np.meshgrid(x, y)
+
+    for j in range(4):
+        plt.scatter(x=mu[j, 0], y=mu[j, 1], color=CLUSTER_MEANS_COLOR[j], marker=(5, 2), s=40)
+
+        Z1 = mlab.bivariate_normal(X, Y, sigmax=cov[j][0][0], sigmay=cov[j][1][1],
+                                   mux=mu[j][0], muy=mu[j][1], sigmaxy=cov[j][0][1])
+
+        #  Overlay with contours of Normal Dist.
+        plt.contour(X, Y, Z1, colors=CLUSTER_MEANS_COLOR[j])
+
+    plt.xlabel('Dim 1')
+    plt.ylabel('Dim 2')
+    plt.title('{}'.format(title))
+
+    plt.savefig('../{}'.format(name))
+    plt.show()
+
+    '''
     hidden = np.argmax(resp, axis=1)
     plt.figure()
 
@@ -162,6 +207,7 @@ def plot_EM_means(mu, cov, resp, data, name, title):
 
     plt.savefig('../{}'.format(name))
     plt.show()
+    '''
 
 plot_EM_means(mu, cov, resp, train_data, name='EM_Spherical_img', title='EM With Spherical Covariance')
 

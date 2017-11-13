@@ -155,7 +155,7 @@ We now derive the M-Step for the Hidden Markov Model. \\
 Let \(\theta^{(s)} = (\pi^{(s)}, A^{(s)}, \mu_1^{(s)}, \cdots, \mu_K^{(s)}, \Sigma_1^{(s)}, \cdots,\Sigma_K^{(s)})\) be the ML parameters learned during step \(s\) of EM. Let \(\gamma_{tk}=P(z_t=k|x_{1:T})\) and \(\xi_{tlm}=P(z_t=l,z_{t+1}=m|x_{1:T})\) - which are the quantities that were computed in the E-Step using \(\theta^{(s)}\).
 The Expected Complete Data Log-Likelihood (at step \(s+1\)) is:
 \begin{equation}
-Q(\theta, \theta^{(s)}) = \sum_{k=1}^K \gamma_{tk}log\pi_k + \sum_{t=1}^T\sum_{k=1}^K \gamma_{tk}P(\bar{x}_t|\mu_{k}, \Sigma_{k}) + \sum_{t=1}^{T-1} \sum_{l=1}^K\sum_{m=1}^K\xi_{tlm}logA_{lm}
+Q(\theta, \theta^{(s)}) = \sum_{k=1}^K \gamma_{1k}log\pi_k + \sum_{t=1}^T\sum_{k=1}^K \gamma_{tk}logP(\bar{x}_t|\mu_{k}, \Sigma_{k}) + \sum_{t=1}^{T-1} \sum_{l=1}^K\sum_{m=1}^K\xi_{tlm}logA_{lm}
 \end{equation}
 
 To solve for \(\pi_k\) we look for stationary points, subject to the constraint \(\sum_{k=1}^K\pi_k = 1\)
@@ -187,7 +187,7 @@ To solve for \(\mu_k\) we look for stationary points
 &\Rightarrow \mu_k^{(s+1)} = \frac{\sum_{t=1}^{T}\gamma_{tk}\bar{x}_t}{\sum_{t=1}^{T-1}\gamma_{tk}}
 \end{align}
 
-To solve for \(\Sigma_k\) we look for stationary points. As in assignment 1, we take the derivative w.r.t \(\Sigma^{-1}_k\)
+To solve for \(\Sigma_k\) we look for stationary points. As in assignment 2, we take the derivative w.r.t \(\Sigma^{-1}_k\)
 \begin{align}
 \frac{\partial}{\partial \Sigma^{-1}_{k}} Q(\theta, \theta^{(s)}) &= \sum_{t=1}^{T}\frac{\partial}{\partial \mu_{k}}\left(\frac{-\gamma_{tk}}{2}log|\Sigma_k| -\frac{\gamma_{tk}}{2}\left(\bar{x}_t-\mu_k^{(s+1)}\right)^T\Sigma_k^{-1}\left(\bar{x}_t-\mu_k^{(s+1)}\right)\right)
 \end{align}
@@ -205,12 +205,100 @@ Differentiating the second term yields
 &=\frac{\partial}{\partial \Sigma^{-1}}\frac{\gamma_{tk}}{2}tr\left(\left(\bar{x}_t-\mu_k^{(s+1)}\right)\left(\bar{x}_t-\mu_k^{(s+1)}\right)^T\Sigma_k^{-1}\right)\\
 &= \frac{\gamma_{tk}}{2}\left(\bar{x}_t-\mu_k^{(s+1)}\right)\left(\bar{x}_t-\mu_k^{(s+1)}\right)^T
 \end{align}
-Where (2.15) and (2.16) come from results proved in class and on Homework 1. After substituting (2.14) and (2.17) into (2.12) and equating to 0 we have that:
+Where (2.15) and (2.16) come from results proved in class and on Homework 2. After substituting (2.14) and (2.17) into (2.12) and equating to 0 we have that:
 
 \begin{align}
 &\sum_{t=1}^{T}\gamma_{tk}\Sigma_k=\sum_{t=1}^{T}
 \gamma_{tk}\left(\bar{x}_t-\mu_k^{(s+1)}\right)\left(\bar{x}_t-\mu_k^{(s+1)}\right)^T\\
 &\Rightarrow \Sigma_k^{(s+1)} = \frac{\sum_{t=1}^{T}\gamma_{tk}(\bar{x}_t-\mu_k^{(s+1)})(\bar{x}_t-\mu_k^{(s+1)})^T}{\sum_{t=1}^{T}\gamma_{tk}}
 \end{align}
+
+\subsection{Deriving Parameters using EM Algorithm}
+We implemented the EM algorithm to learn the parameters of the model, initializing them with the values provided in the homework. We trained the model on the EMGaussians.train dataset. The transition matrix found is as follows:
+
+\begin{align*}
+	 A = \begin{bmatrix}
+	 0.0158 & 0.863 & 0.067 & 0.052\\
+	 0.947 & 0.0226 & 0.022 & 0.0266\\ 
+	 0.0289 & 0.027 & 0.874 & 0.0195 \\
+	 0.0087 & 0.0873 & 0.0371 & 0.902\end{bmatrix}
+\end{align*}
+
+The rest of the parameters are provided in table 2.1:
+
+	\begin{table}
+		\caption {EM Parameter Values} \label{tab:title} 
+		\begin{center}		
+			\begin{tabular}{*6l}   
+				\toprule
+				\emph{Cluster}&  $\pi$ & $\mu$  & $\Sigma$ \\\midrule
+				1 & 0 
+				& $\begin{bmatrix}-1.94
+				 \\  4.2
+				 \end{bmatrix}$  
+				& $\begin{bmatrix}
+				3.34 & 0.32\\
+				0.32 & 2.84 \\ \end{bmatrix}$					
+				\\ \\
+				2 & 0
+				& $\begin{bmatrix}4.0 \\ 3.64
+				\end{bmatrix}$ 
+				& $\begin{bmatrix}
+				0.197 & 0.275 \\
+				0.275 & 12.4 \\ \end{bmatrix}$	
+				\\ \\
+				3 & 0 
+				& $\begin{bmatrix} 3.79
+				 \\ -3.97
+				 \end{bmatrix}$ 
+				& $\begin{bmatrix}
+				0.95 & 0.077\\
+				0.077 & 1.58 \\ \end{bmatrix}$	
+				\\ \\
+				4 & 1
+				& $\begin{bmatrix}-2.96
+				 \\ -3.44
+				 \end{bmatrix}$ 
+				& $\begin{bmatrix}
+				6.88 & 6.66 \\
+				6.66 & 6.75 \\ \end{bmatrix}$
+				\\\bottomrule
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
+	
+\subsection{Log Likelihood of Train and Test Data}
+
+The log likelihood for the training and test data was computed and is displayed in figure 2.2. The log likelihood of the training set is consistently higher then on the test set. This makes sense since the model is being trained to (indirectly) maximize the likelihood of the training set.
+
+\begin{figure}
+	\includegraphics[width=.9\linewidth]{ll_Plot.png}
+	\caption{The log likelihood computed for each iteration of the EM algorithm.}
+\end{figure}
+
+\newpage
+
+\subsection{Comparing Previous Models}
+We compared the values of log-likelihoods of the Gaussian mixture
+model and of the HMM on the train and test data. The results are presented in table 2.2.
+
+	\begin{table}
+		\caption {Training and Test Log Likelihood for Various Models} \label{tab:title} 
+		\begin{center}		
+			\begin{tabular}{*6l}   
+				\toprule
+				\emph{Model}&  Train LL & Test LL  \\\midrule
+				HMM & -1919 & -1949	\\ \\
+				GMM & 0 & 0	
+				\\\bottomrule
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
+
+Compare these values. Does it make sense to make this comparison? Conclude. Compare these log-likelihoods as well with
+the log-likelihoods obtained for the different models in the previous homework.
+
 
 \end{document}
