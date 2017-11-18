@@ -54,6 +54,11 @@
 \usetikzlibrary{calc}
 
 \usepackage{enumerate} % For lettered enumeration
+
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage[noend]{algpseudocode} % for pseudocode
+
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
@@ -147,7 +152,7 @@ We used these to compute the posterior of the latent variable over time \(p(z_t 
 
 \begin{figure}
 	\includegraphics[width=.9\linewidth]{smoothing_dist.png}
-	\caption{The smoothing distribution for the first 100 time points.}
+	\caption{The smoothing distribution for the first 100 time points, using the parameters learned in the previous homework.}
 \end{figure}
 
 \subsection{M-Step Derivation}
@@ -300,5 +305,68 @@ model and of the HMM on the train and test data. The results are presented in ta
 Compare these values. Does it make sense to make this comparison? Conclude. Compare these log-likelihoods as well with
 the log-likelihoods obtained for the different models in the previous homework.
 
+\subsection{Viterbi Decoding Pseudocode}
+
+Let $x_{1:T}$ be observations and $z_{1:T}$ be hidden states, where $z_t \in \{1,\cdots, K\}$. Define $V,P \in \mathbb{R}^{T \times K}$ where $V_{ij}$ is the probability of the most likely path $z_1, \cdots z_i$ with $z_i=j$ and $P_{ij}$ is the value of the corresponding $z_{i-1}$. Let $O_{ij}=P(\bar{x}_i|z_i=j)$. The algorithm is presented below.
+
+\begin{algorithm} % enter the algorithm environment
+	\caption{Calculate $\arg\max\limits_{z_{1:T}}P(z_{1:T} | \bar{x}_{1:T})$} % caption
+	\label{alg1} % and a label for \ref{} commands later in the document
+	\begin{algorithmic}[1] % enter the algorithmic environment
+		\For{state $j \in \{1,\cdots, K\}$}
+		\State{$V_{1j} \leftarrow \pi_jO_{1j}$} 
+		\Comment{$P(\bar{x}_1,z_1=j)$}
+		\State{$P_{1j} \leftarrow -1$} \Comment{initialize with anything}
+		\EndFor
+		\For{time $i \in \{2,\cdots, T\}$}
+		\For{state $j \in \{1,\cdots, K\}$}
+		\State $V_{ij}$ $\leftarrow \max\limits_{k} O_{ij}A_{kj}V_{i-1,k}$
+		\State $P_{ij}$ $\leftarrow \arg\max\limits_{k}O_{ij}A_{kj} V_{i-1,k}$ \Comment{$P(\bar{x}_i|z_i=k)P(z_i=k|z_{i-1}=j)V_{i-1,k}$}
+		\EndFor
+		\EndFor
+		\State $ z_T \leftarrow \arg\max\limits_{k} V_{Tk}$
+		\For{$i \in \{T, T-1, \cdots 2\}$}
+		\State $ z_{i-1} \leftarrow V_{i, z_{i}}$
+		\Comment{backtracking}
+		\EndFor
+		\Return $z_1, \cdots, z_T$
+	\end{algorithmic}
+\end{algorithm}
+
+The algorithm works since 
+\begin{align}
+&\arg\max\limits_{z_{1:T}}P(z_{1:T} | \bar{x}_{1:T}) \\ &=\arg\max\limits_{z_{1:T}}P(\bar{x}_{1:T},z_{1:T}) \\
+&= \arg\max\limits_{z_{T}}\left\{\arg\max\limits_{z_{T-1}}P(\bar{x}_T|z_T)P(z_T|z_{T-1})\left\{\arg\max\limits_{z_{T-2}} P(\bar{x}_{T-1}|z_{T-1}) \cdots \right\}\right\}\\
+&=\arg\max\limits_{z_T}\arg\max\limits_{z_{T-1}}O_{T,Z_{T}}A_{z_{T},z_{T-1}}V_{T-1,z_{T-1}}
+\end{align}
+
+Which is essentially a forward pass with max operation instead of sum. Steps $4-7$ computes the needed $V$ and $P$. Step $8$ uses these to compute $(2.20)$, returning $z_T$. Steps $9-10$ use $P$ and $z_T$ to recover $z_{1:T-1}$.
+
+\subsection{Viterbi Decoding Implementation}
+
+We implemented Viterbi decoding. We used the parameters learned with the EM algorithm to compute the most likely sequence of states with the Viterbi algorithm. The results are presented graphically in Figure 2.3.
+
+\begin{figure}
+	\includegraphics[width=.9\linewidth]{Viterbi_Plot.png}
+	\caption{The training data is presented along with the cluster means, inferred from EM. The datapoints are colored based on each datapoints' Viterbi decoded cluster assignment.}
+\end{figure}
+
+\subsection{Marginal Probability Computations}
+
+For the datapoints in EMGaussian.test, we computed the marginal probability
+\(p(z_t|x_1, \cdots , x_T )\) for each point to be in state \(\{1, 2, 3, 4\}\) using the parameters learned on the training set. For each state, we plotted the probability of being in that state as a function of time. The results for the first 100 datapoints are presented in figure 2.4. We then computed their most likely state according to \(p(z_t|x_1, \cdots , x_T )\) and using Viterbi decoding. The results are presented in Figure 2.5. Note that the most likely sequence of states coincided for the first 100 datapoints (although the did differ at t=448).
+
+\begin{figure}
+	\includegraphics[width=.9\linewidth]{smoothing_dist_EM.png}
+	\caption{The smoothing distribution for the first 100 time points of the test set, using the parameters learned with EM.}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=.9\linewidth]{marg_vs_viterbi.png}
+	\caption{The The most likely state for the first 100 time points of the test data, using Viterbi decoding and the marginal probability.}
+\end{figure}
+
+\subsection{How to Train the Model With Unknown Number of Clusters}
+If the number of states were unknown, there are several ways to be able to choose the number of clusters. One such way would be to run the above with different numbers of clusters.
 
 \end{document}

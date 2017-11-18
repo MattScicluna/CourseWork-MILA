@@ -2,6 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 from scipy.stats import multivariate_normal
+from models import HMM_model
+
+#  set seed for reproducibility
+np.random.seed(2018)
 
 #  Parameters
 FILES = ['EMGaussian.train', 'EMGaussian.test']
@@ -24,6 +28,32 @@ cov = np.array([[[2.9044, 0.2066], [0.2066, 2.7562]],
                [[0.2104, 0.2904], [0.2904, 12.2392]],
                [[0.9213, 0.0574], [0.0574, 1.8660]],
                [[6.2414, 6.0502], [6.0502, 6.1825]]])
+
+hmm = HMM_model(pi_init=pi, A_init=A, mu_init=mu, cov_init=cov)
+
+
+#  Plot for Q2
+def plot_smoothing(smoothing, lim, title):
+    plt.figure().subplots_adjust(wspace=0, hspace=2)
+    plt.suptitle('Smoothing Distribution Over Time')
+    for j in range(4):
+        plt.subplot(4, 1, j+1)
+        plt.plot(smoothing[:lim, j], color=COLOR[j])
+        plt.xlabel('Time')
+        plt.ylabel('Probability')
+        plt.title(r'$p(z_t={} |x_1, \cdots, x_T )$'.format(j+1))
+
+    plt.savefig('../{}'.format(title))
+    plt.show()
+
+smoothing, pair_marginals = hmm.compute_smoothing(test_data)
+plot_smoothing(smoothing, 100, 'smoothing_dist')
+
+
+train_loss, test_loss = hmm.train_model(max_iter=100, epsilon=1e-3, train_data=train_data, test_data=test_data)
+
+
+
 
 
 def alpha_pass(in_data, pi, mu, cov, A):
@@ -85,7 +115,7 @@ def compute_smoothing(in_data, pi, A, mu, cov):
 
 
 #  Plot for Q2
-def plot_smoothing(smoothing, lim):
+def plot_smoothing(smoothing, lim, title):
     plt.figure().subplots_adjust(wspace=0, hspace=2)
     plt.suptitle('Smoothing Distribution Over Time')
     for j in range(4):
@@ -95,11 +125,11 @@ def plot_smoothing(smoothing, lim):
         plt.ylabel('Probability')
         plt.title(r'$p(z_t={} |x_1, \cdots, x_T )$'.format(j+1))
 
-    plt.savefig('../smoothing_dist')
+    plt.savefig('../{}'.format(title))
     plt.show()
 
 smoothing, pair_marginals = compute_smoothing(test_data, pi, A, mu, cov)
-plot_smoothing(smoothing, 100)
+plot_smoothing(smoothing, 100, 'smoothing_dist')
 
 #print(np.sum(pair_marginals[0], axis=1) == smoothing[0])
 '''
@@ -130,7 +160,6 @@ def get_point_marker(data_point, ratios):
 
     for ind, ret in enumerate(ret_val):
         plt.scatter(data_point[0], data_point[1], marker=(ret, 0), facecolor=COLOR[ind])
-
 
 # EM implementation for Q4
 class HMM_model:
@@ -171,15 +200,15 @@ class HMM_model:
         for j in range(4):
             plt.scatter(x=self.mu[j, 0], y=self.mu[j, 1], color=CLUSTER_MEANS_COLOR[j], marker=(5, 2), s=40)
 
-            Z1 = mlab.bivariate_normal(X, Y, sigmax=self.cov[j][0][0], sigmay=self.cov[j][1][1],
-                                       mux=self.mu[j][0], muy=self.mu[j][1], sigmaxy=self.cov[j][0][1])
+            #Z1 = mlab.bivariate_normal(X, Y, sigmax=self.cov[j][0][0], sigmay=self.cov[j][1][1],
+            #                           mux=self.mu[j][0], muy=self.mu[j][1], sigmaxy=self.cov[j][0][1])
 
             #  Overlay with contours of Normal Dist.
-            plt.contour(X, Y, Z1, colors=CLUSTER_MEANS_COLOR[j])
+            #plt.contour(X, Y, Z1, colors=CLUSTER_MEANS_COLOR[j])
 
         plt.xlabel('Dim 1')
         plt.ylabel('Dim 2')
-        plt.title('{}'.format('Viterbi Decoded Centres'))
+        plt.title('Data Clustered using Viterbi Decoding')
 
         plt.savefig('../Viterbi_Plot'.format())
         plt.show()
@@ -252,29 +281,29 @@ class HMM_model:
         return train_losses, test_losses
 
     #  Implement Vertibi Decoding
-    def vertibi_decoding(self, data):
-        n, d = data.shape
-        path = {}  # final path
-        V = np.zeros(shape=[n, 4])  # probabilities
+    def vertibi_decoding(self, data, showplot=True):
+        T, _ = data.shape
+        V = np.zeros(shape=[T, 4])  # probabilities
+        prev = np.empty(shape=[T, 4], dtype='int')  # final path
 
-        V[0, :] = np.log(pi.T) + np.log(np.array([multivariate_normal(mean=mu[i], cov=cov[i]).pdf(data[0]) for i in range(4)]).T)
-        for y in range(4):
-            path[y] = [y]  # initialize with each state
+        V[0, :] = np.log(self.pi.T) + np.log(np.array([multivariate_normal(mean=self.mu[j], cov=self.cov[j]).pdf(data[0]) for j in range(4)]).T)
+        prev[0, :] = [-1, -1, -1, -1]  # initialize with each state
 
-        for k in range(1, n):
-            newpath = {}
-            OT = np.array([multivariate_normal(mean=mu[i], cov=cov[i]).pdf(data[k]) for i in range(4)]).T
+        for i in range(1, T):
+            for j in range(4):
+                (prob, state) = max((V[i - 1, k] + np.log(self.A[k, j]) +
+                                 np.log(multivariate_normal(mean=self.mu[j], cov=self.cov[j]).pdf(data[i])), k)
+                                for k in range(4))
+                V[i][j] = prob
+                prev[i][j] = state
 
-            for next_state in range(4):
-                (prob, state) = max((V[k-1, prev_state] +
-                                     np.log(A[prev_state, next_state]) +
-                                     np.log(OT[next_state]), prev_state) for prev_state in range(4))
-                V[k][next_state] = prob
-                newpath[next_state] = path[state] + [next_state]
-
-            path = newpath
-
-        prob, path = np.max(V[-1, :]), path[np.argmax(V[-1, :])]
+        #  Final path
+        path = np.empty(shape=[T], dtype='int')
+        prob = np.max(V[-1, :])
+        path[-1] = np.argmax(V[-1, :])
+        #  backtrack
+        for i in range(T-1, 0, -1):
+            path[i-1] = prev[i, path[i]]
 
         self.plot_viterbi(path, data)
 
@@ -283,7 +312,6 @@ class HMM_model:
 hmm = HMM_model(pi_init=pi, A_init=A, mu_init=mu, cov_init=cov)
 
 train_loss, test_loss = hmm.train_model(max_iter=100, epsilon=1e-3, train_data=train_data, test_data=test_data)
-prob, path = hmm.vertibi_decoding(train_data)
 
 #  Plot for Q5
 plt.figure()
@@ -292,6 +320,28 @@ plt.ylabel('Log Likelihood')
 plt.title('Log Likelihood Per Iteration')
 plt.plot(train_loss, color='red', label='train ll')
 plt.plot(test_loss, color='blue', label='test ll')
-plt.legend(loc='bottom right')
+plt.legend(loc='lower right')
 plt.savefig('../ll_Plot'.format())
 plt.show()
+
+#  Plot for Q8
+prob, _ = hmm.vertibi_decoding(train_data, showplot=True)
+
+#  Plot for Q9
+smoothing, _ = compute_smoothing(test_data, hmm.pi, hmm.A, hmm.mu, hmm.cov)
+plot_smoothing(smoothing, 100, 'smoothing_dist_EM')
+
+_, path = hmm.vertibi_decoding(test_data, showplot=False)
+
+#  Plot for Q10 and Q11
+plt.figure()
+plt.title('Marginally Most Probable Path vs Viterbi Path')
+plt.plot((np.argmax(smoothing, axis=1)+1)[:100], color='red', label='Marginal Most Probable')
+plt.plot((path+1)[:100], color='blue', label='Viterbi Most Probable')
+plt.xlabel('Time')
+plt.ylabel('Most Likely State')
+plt.legend(loc='upper right')
+plt.savefig('../marg_vs_viterbi')
+plt.show()
+
+# See where points differed np.where(np.argmax(smoothing, axis=1)!=path)
