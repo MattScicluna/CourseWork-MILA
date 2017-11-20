@@ -285,8 +285,8 @@ The log likelihood for the training and test data was computed and is displayed 
 \newpage
 
 \subsection{Comparing Previous Models}
-We compared the values of log-likelihoods of the Gaussian mixture
-model and of the HMM on the train and test data. The results are presented in table 2.2.
+We compared the values of log-likelihoods of the Gaussian Mixture
+Model (with full and spherical covariance structures) and of the HMM on the training and test data. The results are presented in table 2.2.
 
 	\begin{table}
 		\caption {Training and Test Log Likelihood for Various Models} \label{tab:title} 
@@ -294,16 +294,16 @@ model and of the HMM on the train and test data. The results are presented in ta
 			\begin{tabular}{*6l}   
 				\toprule
 				\emph{Model}&  Train LL & Test LL  \\\midrule
-				HMM & -1919 & -1949	\\ \\
-				GMM & 0 & 0	
+				HMM & -1919 & -1949	\\
+				GMM (Full) & -2367 & -2450 \\
+				GMM (Spherical) & -2722 & -2769
 				\\\bottomrule
 				\hline
 			\end{tabular}
 		\end{center}
 	\end{table}
 
-Compare these values. Does it make sense to make this comparison? Conclude. Compare these log-likelihoods as well with
-the log-likelihoods obtained for the different models in the previous homework.
+As was expected, the training log likelihood was higher then the test log likelihood since the models were trained to maximize the training data. The HMM had the highest log likelihood, followed by the GMM with Full covariance, and the GMM with Spherical covariance. This makes sense since the data seemed to be generated using an HMM (since the data were clearly correlated through time and were clearly from different clusters). It does make sense to make this comparison because each model is a subset of the other, with the GMM with general covariance being an HMM with each column of A being identical (i.e. each $z_t$ is independent of $z_{t-1}$).
 
 \subsection{Viterbi Decoding Pseudocode}
 
@@ -340,7 +340,12 @@ The algorithm works since
 &=\arg\max\limits_{z_T}\arg\max\limits_{z_{T-1}}O_{T,Z_{T}}A_{z_{T},z_{T-1}}V_{T-1,z_{T-1}}
 \end{align}
 
-Which is essentially a forward pass with max operation instead of sum. Steps $4-7$ computes the needed $V$ and $P$. Step $8$ uses these to compute $(2.20)$, returning $z_T$. Steps $9-10$ use $P$ and $z_T$ to recover $z_{1:T-1}$.
+Which is essentially a forward pass with max operation instead of sum. Steps $4-7$ computes the needed $V$ and $P$. Step $8$ uses these to compute $(2.20)$, returning $z_T$. Steps $9-10$ use $P$ and $z_T$ to recover $z_{1:T-1}$. Specifically:
+\begin{align*}
+z_{T-1} &= P_{T-1,{z_T}} \\
+z_{T-2} &= P_{T-2,{z_{T-1}}} \\
+&\cdots
+\end{align*}
 
 \subsection{Viterbi Decoding Implementation}
 
@@ -354,7 +359,7 @@ We implemented Viterbi decoding. We used the parameters learned with the EM algo
 \subsection{Marginal Probability Computations}
 
 For the datapoints in EMGaussian.test, we computed the marginal probability
-\(p(z_t|x_1, \cdots , x_T )\) for each point to be in state \(\{1, 2, 3, 4\}\) using the parameters learned on the training set. For each state, we plotted the probability of being in that state as a function of time. The results for the first 100 datapoints are presented in figure 2.4. We then computed their most likely state according to \(p(z_t|x_1, \cdots , x_T )\) and using Viterbi decoding. The results are presented in Figure 2.5. Note that the most likely sequence of states coincided for the first 100 datapoints (although the did differ at t=448).
+\(p(z_t|x_1, \cdots , x_T )\) for each point to be in state \(\{1, 2, 3, 4\}\) using the parameters learned on the training set. For each state, we plotted the probability of being in that state as a function of time. The results for the first 100 datapoints are presented in figure 2.4. We then computed their most likely state according to \(p(z_t|x_1, \cdots , x_T )\) and using Viterbi decoding. The results are presented in Figure 2.5. Note that the most likely sequence of states coincided for the first 100 datapoints (although they did differ at t=448).
 
 \begin{figure}
 	\includegraphics[width=.9\linewidth]{smoothing_dist_EM.png}
@@ -367,6 +372,6 @@ For the datapoints in EMGaussian.test, we computed the marginal probability
 \end{figure}
 
 \subsection{How to Train the Model With Unknown Number of Clusters}
-If the number of states were unknown, there are several ways to be able to choose the number of clusters. One such way would be to run the above with different numbers of clusters.
+One way to choose the number of clusters \(K\) is to treat it as a hyperparameter and select the optimum using cross validation and grid search. For each \(K\) in the hyperparameter space, a KMeans model can be trained, and (assuming a "good" minima is achieved) the cluster centers learned can be used as initial values for a GMM. The parameters learned by the GMM can be used as initial parameters for the HMM. The log likelihood can be evaluated using cross validaion and the \(K\) chosen using grid search.
 
 \end{document}

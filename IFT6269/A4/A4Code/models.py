@@ -25,6 +25,173 @@ def get_point_marker(data_point, ratios):
     for ind, ret in enumerate(ret_val):
         plt.scatter(data_point[0], data_point[1], marker=(ret, 0), facecolor=DATA_COLOR[ind])
 
+class KMeans:
+    def __init__(self, num_means):
+        self.num_means = num_means
+        self.centers = None
+        self.resp = None
+        self.assign = None
+
+    def assign_responsibilities(self, data):
+        n, d = data.shape
+        resp = np.sum((self.centers[:, np.newaxis] - data[np.newaxis::]) ** 2, axis=d)
+        assign = resp.argmin(axis=0)
+        return resp, assign
+
+    def compute_new_centers(self, data):
+        return np.array([np.mean(data[self.assign == j], axis=0) for j in range(self.num_means)])
+
+    def compute_loss(self, data):
+        n, d = data.shape
+        loss = np.sum(
+            np.min(np.sum((self.centers[:, np.newaxis] - data[np.newaxis::]) ** 2, axis=d), axis=0)) / n
+        return loss
+
+    def train(self, data, num_iter, epsilon):
+        n, d = data.shape
+        loss_list = list()
+        self.centers = np.random.uniform(low=data.min(), high=data.max(), size=[self.num_means, d])
+        for iter in range(num_iter):
+            #  E Step
+            self.resp, self.assign = self.assign_responsibilities(data)
+
+            #  M Step
+            self.centers = self.compute_new_centers(data)
+
+            loss_list.append(self.compute_loss(data))
+            print("current mean square deviation at iter {0}: {1}".format(iter, loss_list[iter]))
+            if iter > 1:
+                if loss_list[iter - 1] - loss_list[iter] < epsilon:
+                    break
+
+        return loss_list
+
+    def plot_k_means(self, data):
+        _, assign = self.assign_responsibilities(data)
+        plt.figure()
+        for j in range(self.num_means):
+            plt.scatter(x=data[assign == j, 0], y=data[assign == j, 1], color=DATA_COLOR[j], alpha=0.3,
+                        s=20)
+            plt.scatter(x=self.centers[j, 0], y=self.centers[j, 1], color=CLUSTER_MEANS_COLOR[j], marker=(5, 2), s=40)
+
+        plt.xlabel('Dim 1')
+        plt.ylabel('Dim 2')
+        plt.title('K Means')
+
+        #plt.savefig('../K_means_img')
+        plt.show()
+
+
+class GMM_model():
+    def __init__(self, init_mu, init_pi, init_cov, struct='full'):
+        self.pi = init_pi
+        self.mu = init_mu
+        self.cov = init_cov
+        self.k = self.pi.shape[0]
+        self.resp = None
+        assert struct in ['full', 'sphere']
+        self.struct = struct
+
+    def __init__(self, train_data, num_clusters, struct='full'):
+        n, d = train_data.shape
+        self.k = num_clusters
+        assert struct in ['full', 'sphere']
+        self.struct = struct
+        kmodel = KMeans(self.k)
+        kmodel.train(train_data, 100, 1e-10)
+        #kmodel.plot_k_means(train_data)
+        self.mu = kmodel.centers
+        self.resp = kmodel.assign
+        self.pi = np.array([self.resp.tolist().count(i) / n for i in range(self.k)])
+        if self.struct == 'full':
+            self.cov = np.array([np.identity(d) * train_data[self.resp == i].var() for i in range(self.k)])
+        if self.struct == 'sphere':
+            self.cov = np.array([np.identity(d) * train_data[self.resp == i].var() for i in range(self.k)])
+
+    def get_responsibilities(self, data):
+        n, _ = data.shape
+        resp = np.array(
+            [np.log(self.pi[i]) + np.log(multivariate_normal(mean=self.mu[i], cov=self.cov[i]).pdf(data)) for i in range(self.k)]).T
+        #  normalize
+        resp = np.exp(resp)
+        resp /= resp.sum(axis=1, keepdims=1)
+        return resp
+
+    def compute_loss(self, data):
+        n, _ = data.shape
+        resp = self.get_responsibilities(data)
+
+        loss = np.array([np.log(self.pi[i]) + np.log(multivariate_normal(mean=self.mu[i], cov=self.cov[i]).pdf(data))
+                         for i in range(self.k)])
+        loss = np.sum(loss.T * resp) / n
+        return resp, loss
+
+    def update_params(self, data):
+        n, d = data.shape
+        new_pi = self.resp.mean(axis=0)
+
+        new_mu = np.dot(self.resp.T, data) / self.resp.T.sum(axis=1, keepdims=True)
+
+        if self.struct == 'full':
+            new_cov = np.empty((self.k, d, d))
+            for k in range(self.k):
+                diff = data - self.mu[k]
+                new_cov[k] = np.dot(self.resp[:, k] * diff.T, diff) / np.sum(self.resp, axis=0)[k]
+        if self.struct == 'sphere':
+            new_cov = (data[:, np.newaxis, :] - new_mu) ** 2
+            new_cov = new_cov * self.resp[:, :, np.newaxis]
+            new_cov /= self.resp.sum(axis=0)[:, np.newaxis]
+            new_cov = new_cov.mean(d).sum(0)  # average over dimensions for spherical
+            new_cov = np.array([np.identity(d) * new_cov[i] for i in range(self.k)])
+
+        return new_pi, new_mu, new_cov
+
+    def train(self, data, num_iter, epsilon):
+        losses = []
+        for iter_em in range(num_iter):
+
+            # E Step
+            self.resp, loss = self.compute_loss(data)
+            losses.append(loss)
+
+            if iter_em > 1:
+                if losses[iter_em] - losses[iter_em-1] < epsilon:
+                    break
+
+            # M Step
+            self.pi, self.mu, self.cov = self.update_params(data)
+            print('log likelihood for iteration {0}: {1}'.format(iter_em, loss))
+
+        return losses
+
+    def plot_means(self, data, name, title):
+        n, d = data.shape
+        resp = self.get_responsibilities(data)
+
+        plt.figure()
+
+        for ind in range(n):
+            get_point_marker(data[ind], resp[ind])
+
+        x = np.linspace(-10, 10)
+        y = np.linspace(-10, 10)
+        X, Y = np.meshgrid(x, y)
+
+        for j in range(self.k):
+            plt.scatter(x=self.mu[j, 0], y=self.mu[j, 1], color=CLUSTER_MEANS_COLOR[j], marker=(5, 2), s=40)
+
+            Z1 = mlab.bivariate_normal(X, Y, sigmax=self.cov[j][0][0], sigmay=self.cov[j][1][1],
+                                       mux=self.mu[j][0], muy=self.mu[j][1], sigmaxy=self.cov[j][0][1])
+
+            #  Overlay with contours of Normal Dist.
+            plt.contour(X, Y, Z1, colors=CLUSTER_MEANS_COLOR[j])
+
+        plt.xlabel('Dim 1')
+        plt.ylabel('Dim 2')
+        plt.title('{}'.format(title))
+
+        plt.savefig('../{}'.format(name))
+        plt.show()
 
 # EM implementation for Q4
 class HMM_model:
