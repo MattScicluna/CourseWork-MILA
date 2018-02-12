@@ -1,0 +1,21 @@
+\begin{thebibliography}{1}
+
+\bibitem{Goodfellow-et-al-2016}
+I.~Goodfellow, Y.~Bengio, and A.~Courville, {\em Deep Learning}.
+\newblock MIT Press, 2016.
+
+\bibitem{pmlr-v9-glorot10a}
+X.~Glorot and Y.~Bengio, ``Understanding the difficulty of training deep
+  feedforward neural networks,'' in {\em Proceedings of the Thirteenth
+  International Conference on Artificial Intelligence and Statistics} (Y.~W.
+  Teh and M.~Titterington, eds.), vol.~9 of {\em Proceedings of Machine
+  Learning Research}, (Chia Laguna Resort, Sardinia, Italy), pp.~249--256,
+  PMLR, 13--15 May 2010.
+
+\bibitem{He:2015:DDR:2919332.2919814}
+K.~He, X.~Zhang, S.~Ren, and J.~Sun, ``Delving deep into rectifiers: Surpassing
+  human-level performance on imagenet classification,'' in {\em Proceedings of
+  the 2015 IEEE International Conference on Computer Vision (ICCV)}, ICCV '15,
+  (Washington, DC, USA), pp.~1026--1034, IEEE Computer Society, 2015.
+
+\end{thebibliography}
