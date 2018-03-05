@@ -1,0 +1,148 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size 
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{mathtools}
+\usepackage{sectsty} % Allows customizing section commands
+%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+\usepackage{bbm}
+\usepackage{graphicx}
+\usepackage{xcolor} % For color
+\usepackage{subcaption}
+\usepackage{booktabs}
+
+\usepackage{tikz} % For graphs
+\usetikzlibrary{positioning}
+\usetikzlibrary{calc}
+
+\usepackage{enumerate} % For lettered enumeration
+
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage[noend]{algpseudocode} % for pseudocode
+
+% commands
+\newcommand{\Ex}[2]{\mathbb{E}_{#1}\left\{#2\right\}}
+\newcommand{\dP}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\Var}[1]{Var\left\{#1\right\}}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Assignment Two \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{
+	Matthew C.~Scicluna\\
+	D\'epartement d'Informatique et de Recherche Op\'erationnelle\\
+	Universit\'e de Montr\'eal\\
+	Montr\'eal, QC H3T 1J4 \\
+	\texttt{matthew.scicluna@umontreal.ca}
+}
+
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+\section{Convolutions}
+We compute the full valid and same convolution with kernel flipping for the following matrices: $[1, 2, 3, 4] * [1, 0, 2]$
+
+\begin{itemize}
+	\item The valid convolution is: $[1\cdot2 + 2\cdot0 + 3\cdot1, \ 2\cdot2 + 3\cdot0 + 4\cdot1] = [5,8]$
+	\item Likewise the same convolution is: $[0, 1, 2, 3, 4, 0] * [1, 0, 2] = [2,5,8,6]$
+	\item Finally the full convolution is: $[0, 0, 1, 2, 3, 4, 0, 0] * [1, 0, 2] = [1,2,5,8,6,8]$
+\end{itemize}
+
+\section{Convolutional Neural Networks}
+Consider a $3$-layer CNN. We are given an input of size $3\times256\times256$. The first layer contains $64$ $8\times8$ kernels using a stride of $2$ and no padding. The shape of its output is $64\times125\times125$ using relationship 6 from \cite{journals/corr/DumoulinV16}: 
+$$\text{output length}=\floor*{\frac{256+2\cdot0-8}{2}}+1=125$$
+The second layer subsamples this using $5\times5$ non-overlapping max pooling. It is easy to see that the size of its output is $64\times25\times25$, since $\frac{125}{5}=25$. The final layer convolves $128$ $4\times4$ kernels with a stride of $1$ and a zero-padding of size $1$ on each border. Using the formula we have that $\floor*{\frac{25+2\cdot1-4}{1}}+1=24$, and so the output of the last layer has shape $128\times24\times24$.
+\begin{enumerate}[(a)]
+	\item The output of the last layer will be of size: $128\times24\times24 = 73725$
+	\item Ignoring biases, we would need $64\times25\times25\times128 = 5120000$ weights
+\end{enumerate}
+
+\section{Kernel configuration for CNNs}
+We are given an input shape of $3\times64\times64$ and the output shape
+is $64\times32\times32$ for a convolutional layer.
+\begin{enumerate}[(a)]
+	\item Assuming no dilation and kernel size of $8\times8$, we can solve for the stride length $s$ and the padding $p$ by solving the relationship with the given kernel size (setting $s=2$ for simplicity):
+	\begin{align*}
+	\floor*{\frac{64+2\cdot p-8}{2}}+1&=32\\
+	32+p-4+1&=32\\
+	p&=3
+	\end{align*}
+	Setting $3$ padding with $2$ stride satisfies the convolution dimensions. Assuming dilatation $d=6$ and stride of $s=2$, we can use relationship 15 from \cite{journals/corr/DumoulinV16} to get:
+	\begin{align*}
+		\floor*{\frac{64+2\cdot p-k-(k-1)(6-1)}{2}}+1&=32\\
+		\floor*{\frac{69+2\cdot p-6\cdot k}{2}}&=31\\
+	\end{align*}
+	This is satisfied when $69+2\cdot p-6\cdot k = 63$. We simplify further to get $2p-6k+6=0$, for which one possible solution is: $p=3$, $k=2$. Therefore, setting padding to be $3$ and kernel size $2\times2$ satisfies the convolution dimensions.
+	\item Given an input shape of $64\times32 \times32$ and the output shape
+	is $64\times8 \times8$ a configuration assuming no overlapping of pooling windows or padding would have kernel size $4$ and stride $1$. This is easily seen since $\frac{32}{8}=4$.
+	\item Without any padding and given input shape $64\times32 \times32$ and kernel of size $8\times8$ and stride $4$ we can use the relation to get:
+	$$\text{output length}=\floor*{\frac{32+2\cdot0-8}{4}}+1=7$$
+	And so the output size would be $7\times7$.
+\end{enumerate}
+
+
+\newpage
+
+\bibliographystyle{ieeetr}
+\bibliography{A2.bib}
+
+
+\end{document}
