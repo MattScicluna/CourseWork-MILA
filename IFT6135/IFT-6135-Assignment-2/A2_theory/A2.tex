@@ -136,8 +136,59 @@ is $64\times32\times32$ for a convolutional layer.
 	\item Without any padding and given input shape $64\times32 \times32$ and kernel of size $8\times8$ and stride $4$ we can use the relation to get:
 	$$\text{output length}=\floor*{\frac{32+2\cdot0-8}{4}}+1=7$$
 	And so the output size would be $7\times7$.
+	\item We are given input shape $64\times8 \times8$ and output $128\times4 \times4$
+	\begin{enumerate}[(i)]
+		\item Assuming no padding and no dilation and using the relation above, we can easily solve to get kernel size $4$ and stride $2$.
+		\item Assuming dilatation of $1$ and padding of $2$, kernel size $6$ and stride $2$ satisfies the input/output dimensions.
+		\item Assuming padding of $1$ and no dilatation, kernel size $4$ and stride $2$ satisfies the input/output dimensions.
+	\end{enumerate}
 \end{enumerate}
 
+\section{Dropout as weight decay}
+	We consider a linear regression problem with input data $X\in\mathbb{R}^{n\times d}$, weights $w\in R^{d\times1}$ and
+	and targets $y\in R^{n\times1}$. We also suppose that dropout is being applied to the input units with probability $p$.
+\begin{enumerate}[(a)]
+	\item We can let $\tilde{X}=P\odot X$ where $P_{ij}\sim Bernoulli(p)$
+	\item The cost function of this would be
+	\begin{align*}
+	\Ex{P}{\| y-\tilde{X}w\|^2} &= \Ex{P}{(y-\tilde{X}w)^T(y-\tilde{X}w) } \\
+	&= y^Ty-2w^T\Ex{P}{\tilde{X}^T}y+\Ex{P}{w^T\tilde{X}^T\tilde{X}w}\\
+	&= y^Ty-2pw^TX^Ty+ \Bigl( p^2 (Xw)^T(Xw) - p^2 (Xw)^T(Xw) \Bigr) + \Ex{P}{w^T\tilde{X}^T\tilde{X}w}\\
+	&= \| y-pXw\|^2 + \Ex{P}{w^T\tilde{X}^T\tilde{X}w} - p^2 (Xw)^T(Xw)\\
+	&= \| y-pXw\|^2 + \Ex{P}{w^T\tilde{X}^T\tilde{X}w} - \Ex{P}{(\tilde{X}w)^T(\tilde{X}w)}\\
+	&= \| y-pXw\|^2 + w^T\left(\Ex{P}{\tilde{X}^T\tilde{X}} - \Ex{P}{\tilde{X}}^T\Ex{p}{\tilde{X}}\right)w
+	\end{align*}
+	We evaluate the matrix in the rightmost term:
+	\begin{align*}
+	\Ex{P}{\tilde{X}^T\tilde{X}} - \Ex{P}{\tilde{X}}^T\Ex{p}{\tilde{X}} &= \left[ \sum_k \Ex{}{p_{ki}p_{kj}}x_{ki}x_{kj}-\Ex{}{p_{ki}}\Ex{}{p_{kj}}x_{ki}x_{kj} \right]_{ij}\\
+	&= \sum_k Cov(p_{ki},p_{kj})x_{ki}x_{kj}\\
+	&=
+	\begin{cases}
+	\sum_k p(1-p)x_{ki}^2
+	& \text{if $i=j$}\\
+	0 & \text{o.w.}
+	\end{cases}\\
+	&= Diag(X^TX)p(1-p)
+	\end{align*}
+	Inserting this into the cost function gives us:
+	\begin{align*}
+	\Ex{P}{\| y-\tilde{X}w\|^2} &= \| y-pXw\|^2 + p(1-p) w^TDiag(X^TX)w\\
+	&= \| y-pXw\|^2 + p(1-p) \|\Gamma w\|^2
+	\end{align*}
+	Where $\Gamma = Diag(X^TX)^{\frac{1}{2}}$
+	\item We show that applying dropout to the linear regression problem can be seen as using L2 regularization in the loss function. Let $\tilde{w}̄=pw$. The optimal value of the cost function is:
+	\begin{align*}
+		\dP{}{\tilde{w}}\left( \| y-X\tilde{w}\|^2 + \frac{1-p}{p} \|\Gamma \tilde{w}\|^2\right) &= -2X^Ty + 2X^TX\tilde{w} + 2\frac{1-p}{p}\Gamma^2\tilde{w}
+	\end{align*}
+	And setting this to zero yields:
+	\begin{align*}
+		&\frac{1-p}{p}\Gamma^2\tilde{w} + X^TX\tilde{w} =  X^Ty\\
+		&\Rightarrow  \left(\frac{1-p}{p}\Gamma^2 + X^TX\right)\tilde{w} = X^Ty\\
+		&\Rightarrow \tilde{w} = \left(\lambda\Gamma^2 + X^TX\right)^{-1}X^Ty
+	\end{align*}
+	where $\lambda=\frac{1-p}{p}$. Notice that the solution to the regularized least squares problem is identical except the $\lambda\Gamma^2$ term is replaced by $\lambda I$. In dropout, the $\Gamma$ term adds additional cost to weights which are in directions where the data varies, wheras in ordinary L2 regularized least squares, the directions are penalized by the same amount.
+	
+\end{enumerate}
 
 \newpage
 

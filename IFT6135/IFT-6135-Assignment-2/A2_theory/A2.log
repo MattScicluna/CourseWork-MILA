@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.22)  5 MAR 2018 18:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.22)  6 MAR 2018 15:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -764,7 +764,14 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
  [1
 
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (./A2.bbl
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
+Overfull \hbox (33.16896pt too wide) in paragraph at lines 160--160
+[] 
+ []
+
+Missing character: There is no Ì in font cmr10!
+Missing character: There is no „ in font cmr10!
+[3] [4] (./A2.bbl
 
 Class scrartcl Warning: incompatible usage of \@ssect detected.
 (scrartcl)              You've used the KOMA-Script implementation of \@ssect
@@ -773,15 +780,15 @@ Class scrartcl Warning: incompatible usage of \@ssect detected.
 (scrartcl)              This could result in several error messages on input li
 ne 1.
 
-) [3] (./A2.aux) ) 
+) [5] (./A2.aux) ) 
 Here is how much of TeX's memory you used:
- 17102 strings out of 494953
- 324138 string characters out of 6180977
- 427595 words of memory out of 5000000
- 20037 multiletter control sequences out of 15000+600000
- 19591 words of font info for 55 fonts, out of 8000000 for 9000
+ 17107 strings out of 494953
+ 324184 string characters out of 6180977
+ 432595 words of memory out of 5000000
+ 20040 multiletter control sequences out of 15000+600000
+ 20236 words of font info for 58 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 64i,11n,60p,475b,317s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 64i,19n,60p,475b,393s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/mattscicluna/.texmf-var/fonts/pk/ljfour/jknappen/ec/e
 cti1095.600pk> </home/mattscicluna/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1
 440.600pk> </home/mattscicluna/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.
@@ -790,14 +797,17 @@ k> </home/mattscicluna/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1440.600pk> <
 /home/mattscicluna/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk></usr/
 share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmsy8.pfb>
-Output written on A2.pdf (3 pages, 102256 bytes).
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/sy
+mbols/msbm10.pfb>
+Output written on A2.pdf (5 pages, 138694 bytes).
 PDF statistics:
- 216 PDF objects out of 1000 (max. 8388607)
- 53 compressed objects within 1 object stream
+ 242 PDF objects out of 1000 (max. 8388607)
+ 66 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
