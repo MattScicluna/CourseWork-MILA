@@ -4,4 +4,8 @@
 V.~Dumoulin and F.~Visin, ``A guide to convolution arithmetic for deep
   learning.,'' {\em CoRR}, vol.~abs/1603.07285, 2016.
 
+\bibitem{Goodfellow-et-al-2016}
+I.~Goodfellow, Y.~Bengio, and A.~Courville, {\em Deep Learning}.
+\newblock MIT Press, 2016.
+
 \end{thebibliography}

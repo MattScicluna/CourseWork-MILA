@@ -203,6 +203,42 @@ p_{\text{ens}}(y=j|v) &\propto \left( \prod_{i=1}^N softmax\left(W^T(m_i\odot v)
 &=\exp\left\{\frac{1}{2}W^Tv+b\right\}_j
 \end{align*}
 
+\section{Normalization}
+We investigate Weight Normalization (WN). We decouple the weight vector into two terms : 
+$$ w = \frac{g}{\|u\|}u $$
+where $g\in\mathbb{R}$ is a scaling factor. Doing so has similar effects as implementing Batch Normalization (BN), but has a lower computational overhead.
+\begin{enumerate}[(a)]
+	\item We consider the simplest model, where we only have one single output layer conditioned on one input feature $x$. Additionally, we assume $\Ex{}{x}=0, \Var{x}=1$. We show that in this simple case WN is equivalent to BN (ignoring the learned scale and shift terms) that normalizes the linearly transformed feature $a=w^Tx+b$. From 8.35 of \cite{Goodfellow-et-al-2016} we have that:
+	\begin{align*}
+	BN(a) = \frac{a-\Ex{}{a}}{\sqrt{\Var{a}}} = \frac{w^Tx}{\|w\|}
+	\end{align*}
+	since $\Ex{}{w^Tx}=w^T\Ex{}{x}=0$ and $\Var{w^Tx}=w^T\Var{x}w=w^Tw=\|w\|^2$.
+	Ignoring the scale and shift terms, we see that this is equivalent to weight normalization.
+	\item Show that the gradient of a loss function L with respect to the new parameters u can be expressed in the form $sW^*\nabla_w L$, where $s$ is a scalar and $W^*$ is the orthogonal complement projection matrix. We compute the gradient. Using the multivariate chain rule:
+	\begin{align*}
+		\nabla_u L &= \nabla_u w \nabla_w L\\
+		&= g \nabla_u \frac{u}{\|u\|} \nabla_w L\\
+		&= \frac{g}{\|u\|} \left( I- \frac{uu^T}{\|u\|^2} \right) \nabla_w L
+	\end{align*}
+	Since 
+	\begin{align*}
+	\dP{w_i}{u_j} = \dP{}{u_j}\frac{u_i}{\|u\|} = \frac{1_{i=j}-\frac{u_j}{\|u\|^2}u_i}{\|u\|}
+	\end{align*}
+	And so multiplying and dividing the matrix by $g^2=\|w\|^2$ gives us
+	\begin{align*}
+		\nabla_u L &= \frac{g}{\|u\|} \left( I- \frac{ww^T}{\|w\|^2} \right) \nabla_w L \\
+		&= s W^* \nabla_w L
+	\end{align*}
+	Where $s=\frac{g}{\|w\|}$ and $W^* = \left( I- \frac{ww^T}{\|w\|^2} \right)$ is a projection matrix that projects onto the complement of $w$.
+	\item The effect in the figure is a consequence of (b). Let $u' = u + \alpha\nabla_u L$, which is standard gradient descent with $\alpha$ learning rate. Since $W^*$ projects $\nabla_u L$ orthogonal to $w$, we have that $ w \perp \nabla_u L$ and so $ u \perp \nabla_u L$ (since $u \propto w$). Let $c=\frac{\|\nabla_u L\|}{\|u\|}$. We can use Pythagorean theorem (due to the orthogonality of $u$ and $\nabla_u L$) to get that
+	\begin{align*}
+	\|u'\| = \| u + \alpha\nabla_u L \| &= \sqrt{\|u\|^2+\alpha^2\|\nabla_u L\|^2}\\
+	&= \sqrt{\|u\|^2+\alpha^2c^2\|u\|^2}\\
+	&= \sqrt{1+\alpha^2c^2}\|u\|\\
+	&\ge \|u\|
+	\end{align*}
+	We see that $\|u\|$ grows monotonically, and this growth is proportional to $\alpha$. This explains what is happening in the graph.
+\end{enumerate}
 
 \newpage
 
