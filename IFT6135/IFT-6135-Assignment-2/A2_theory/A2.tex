@@ -187,8 +187,22 @@ is $64\times32\times32$ for a convolutional layer.
 		&\Rightarrow \tilde{w} = \left(\lambda\Gamma^2 + X^TX\right)^{-1}X^Ty
 	\end{align*}
 	where $\lambda=\frac{1-p}{p}$. Notice that the solution to the regularized least squares problem is identical except the $\lambda\Gamma^2$ term is replaced by $\lambda I$. In dropout, the $\Gamma$ term adds additional cost to weights which are in directions where the data varies, wheras in ordinary L2 regularized least squares, the directions are penalized by the same amount.
-	
 \end{enumerate}
+
+\section{Dropout as Geometric Ensemble}
+
+We show that weight scaling with a factor of $0.5$ corresponds exactly to the inference of a conditional probability distribution proportional to the geometric mean over all dropout masks:
+$$ p_{\text{ens}}(y=j|v) \propto \left( \prod_{i=1}^N \hat{y}_j^{(i)} \right)^{\frac{1}{N}} $$
+Where $N$ is the number of dropout masks, $\hat{y}_j^{(i)}=softmax\left(W^T(m_i\odot v)+b\right)_j$ and $m_i$ is a dropout mask configuration, for which there are $N$ of. We expand the geometric mean:
+\begin{align*}
+p_{\text{ens}}(y=j|v) &\propto \left( \prod_{i=1}^N softmax\left(W^T(m_i\odot v)+b\right)_j\right)^{\frac{1}{N}}\\
+&= \left(\prod_{i=1}^N \frac{\exp\left\{W^T(m_i\odot v)+b\right\}_j}{\sum_{j'}\exp\left\{W^T(m_i\odot v)+b\right\}_{j'}}\right)^\frac{1}{N}\\
+&= \frac{\left(\prod_{i=1}^N \exp\left\{W^T(m_i\odot v)+b\right\}_j \right)^{\frac{1}{N}}}{\left(\prod_{i=1}^N\sum_{j'}\exp\left\{W^T(m_i\odot v)+b\right\}_{j'}\right)^{\frac{1}{N}}}\\
+&\propto \left(\prod_{i=1}^N \exp\left\{W^T(m_i\odot v)+b\right\}_j \right)^{\frac{1}{N}}\\
+&=\exp\left\{\frac{1}{N}\sum_{i=1}^N W^T(m_i\odot v)+b\right\}_j\\
+&=\exp\left\{\frac{1}{2}W^Tv+b\right\}_j
+\end{align*}
+
 
 \newpage
 
