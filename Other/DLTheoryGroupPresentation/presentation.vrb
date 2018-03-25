@@ -1,0 +1,140 @@
+\frametitle{Technical dive }
+What is an interesting analytical technique, proof method, experimental protocol, other approach to doing things? What is one technical thing that we can learn here? Explain in a few slides.
+\end{frame}	
+
+\section{Discussion}
+
+\begin{frame}{Some Thoughts... }
+	\begin{enumerate}
+		\item My favorite papers are the ones that shed light on truths that are taken for granted.
+		\item Its obvious that randomizing the labels would eliminate generalizability, but explaining why is not!
+		\item The paper doesn't really make many conclusions of its own.
+	\end{enumerate}
+	
+	What is not convincing? (too strong assumptions? results not as ‘good’/‘tight’ as other approaches we might know? results are not applicable for ‘x’ reason? bounds are vacuous?)
+	
+	What can be improved? (if you where to work in this area, which part of the result would you tweak to make it better, non-vacuous, tighter, more relevant...)
+	
+	What interesting open questions that might have been outside the scope of this paper come to your mind when studying it?
+\end{frame}	
+
+\begin{frame}{References}
+\bibliography{presentation.bib}
+\bibliographystyle{ieeetr}
+\end{frame}	
+	
+\end{document}
+
+
+
+%\documentclass{beamer}
+%
+%\mode<presentation>
+%{
+%	\usetheme{Warsaw}
+%	
+%	\setbeamercovered{transparent}
+%}
+%
+%\usepackage[utf8]{inputenc}
+%\usepackage[english]{babel}
+%\usepackage{times}
+%\usepackage[T1]{fontenc}
+%
+%
+%
+%\institute[University of Toronto] % (optional, but mostly needed)
+%{
+%	Department of Statistical Sciences\\
+%	University of Toronto
+%}
+%
+%\title[UNDERSTANDING DEEP LEARNING REQUIRES RETHINKING GENERALIZATION] % (optional, use only with long paper titles)
+%{IFT6085 Paper Presentation}
+%
+%\subtitle
+%{UNDERSTANDING DEEP LEARNING} % (optional)
+%
+%\author[Aldo Lamarre, Matthew Scicluna] % (optional, use only with lots of authors)
+%{~Matthew Scicluna}
+%
+%\institute[University of Toronto] % (optional, but mostly needed)
+%{
+%	Department of Statistical Sciences\\
+%	University of Toronto
+%}
+%
+%\date[Feb 21 2018] % (optional)
+%{Feb 21 2018}
+%
+%\pgfdeclareimage[height=0.7cm]{university-logo}{MILA.png}
+%\logo{\pgfuseimage{university-logo}}
+%
+%
+%
+%% Delete this, if you do not want the table of contents to pop up at
+%% the beginning of each subsection:
+%\AtBeginSubsection[]
+%{
+%	\begin{frame}<beamer>{Outline}
+%		\tableofcontents[currentsection,currentsubsection]
+%	\end{frame}
+%}
+%
+%
+%% If you wish to uncover everything in a step-wise fashion, uncomment
+%% the following command:
+%
+%%\beamerdefaultoverlayspecification{<+->}
+%
+%\begin{document}
+%
+%\frame{\titlepage}
+%
+%\begin{frame}
+%	\frametitle{What Doesn't Work}
+%	\begin{enumerate}
+%		\item
+%	\end{enumerate}
+%\end{frame}
+%
+%\begin{frame}
+%	\frametitle{Summary}
+%	\begin{enumerate}
+%		\item Deep neural Networks generalize well
+%		\item Conventional wisdom attributes this to properties of the model family or to the regularization techniques used during training
+%		\item Experiments show that this is not the case
+%	\end{enumerate}
+%\end{frame}
+%
+%\begin{frame}
+%	\frametitle{The Experiment}
+%	\begin{enumerate}
+%		\item Trained state-of-the-art model with SGD on image classification task
+%		\item ... with the labels randomly swapped!
+%		\item ``easily" fits this training data
+%		\item this is qualitatively unaffected by explicit regularization
+%		\item and occurs even if we replace the true images with completely unstructured random noise
+%	\end{enumerate}
+%\end{frame}
+%
+%\begin{frame}
+%	\frametitle{Introduction}
+%	\begin{enumerate}
+%		\item What causes Deep artificial Neural Networks to generalize well?
+%		\item Statistical Learning Theory gives bounds on generalization error
+%		\item Deep neural networks easily fit random labels
+%		\item Can make training error 0 while test error is no better then random chance
+%	\end{enumerate}
+%\end{frame}
+%
+%\begin{frame}
+%	\frametitle{Consequences}
+%	\begin{enumerate}
+%		 \item The effective capacity of neural networks is sufficient for memorizing the entire data set.
+%		 \item Even optimization on random labels remains easy. In fact, training time increases only by a small constant factor compared with training on the true labels.
+%		 \item Randomizing labels is solely a data transformation, leaving all other properties of the learning problem unchanged.
+%	\end{enumerate}
+%\end{frame}
+%
+%\end{document}
