@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.22)  25 MAR 2018 18:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.22)  2 APR 2018 19:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1260,66 +1260,53 @@ Overfull \vbox (11.42924pt too high) detected at line 61
 
 [5
 
- <./complexity.png>] <bigmodels.png, id=82, 528.97626pt x 230.8625pt>
-File: bigmodels.png Graphic file (type png)
-
-<use bigmodels.png>
-Package pdftex.def Info: bigmodels.png used on input line 75.
-(pdftex.def)             Requested size: 215.10196pt x 93.87572pt.
-
-Overfull \hbox (0.4pt too wide) in paragraph at lines 75--75
+ <./complexity.png>]
+Overfull \hbox (0.4pt too wide) in paragraph at lines 87--87
 [][]  
  []
 
 [6
 
- <./bigmodels.png>]
-Overfull \hbox (0.4pt too wide) in paragraph at lines 87--87
-[][]  
- []
-
-[7
-
-] [8
+] [7
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 100--100
 [][]  
  []
 
-[9
+[8
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 110--110
 [][]  
  []
 
-[10
+[9
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 120--120
 [][]  
  []
 
-[11
+[10
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 133--133
 [][]  
  []
 
-[12
+[11
 
-] [13
+] [12
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 147--147
 [][]  
  []
 
-[14
+[13
 
-] <fig1c.png, id=142, 1910.13625pt x 665.48625pt>
+] <fig1c.png, id=133, 1910.13625pt x 665.48625pt>
 File: fig1c.png Graphic file (type png)
  <use fig1c.png>
 Package pdftex.def Info: fig1c.png used on input line 157.
@@ -1329,23 +1316,23 @@ Overfull \hbox (0.4pt too wide) in paragraph at lines 157--157
 [][]  
  []
 
-[15
+[14
 
  <./fig1c.png>]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 166--166
 [][]  
  []
 
-[16
+[15
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 176--176
 [][]  
  []
 
-[17
+[16
 
-] <fig2c.png, id=160, 1002.74625pt x 353.32pt>
+] <fig2c.png, id=151, 1002.74625pt x 353.32pt>
 File: fig2c.png Graphic file (type png)
  <use fig2c.png>
 Package pdftex.def Info: fig2c.png used on input line 189.
@@ -1355,33 +1342,40 @@ Overfull \hbox (0.4pt too wide) in paragraph at lines 189--189
 [][]  
  []
 
-[18
+[17
 
- <./fig2c.png (PNG copy)>] [19
+ <./fig2c.png (PNG copy)>] [18
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 199--199
 [][]  
  []
 
-[20
+[19
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 203--203
 [][]  
  []
 
-[21
+[20
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 213--213
 [][]  
  []
 
-[22
+[21
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 224--224
+[][]  
+ []
+
+[22
+
+]
+Overfull \hbox (0.4pt too wide) in paragraph at lines 245--245
 [][]  
  []
 
@@ -1415,30 +1409,23 @@ Overfull \hbox (0.4pt too wide) in paragraph at lines 245--245
 
 [27
 
-]
-Overfull \hbox (0.4pt too wide) in paragraph at lines 245--245
-[][]  
- []
-
-[28
-
-] [29
+] [28
 
 ]
 Overfull \hbox (0.4pt too wide) in paragraph at lines 254--254
 [][]  
  []
 
-[30
+[29
 
-] [31
+] [30
 
 ] (./presentation.bbl)
 Overfull \hbox (0.4pt too wide) in paragraph at lines 272--272
 [][]  
  []
 
-[32
+[31
 
  </usr/share/texlive/texmf-dist/tex/latex/beamer/art/beamericonarticle.pdf>]
 \tf@nav=\write6
@@ -1468,10 +1455,10 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 274.
  ) 
 Here is how much of TeX's memory you used:
- 30593 strings out of 494953
- 734254 string characters out of 6180977
+ 30584 strings out of 494953
+ 734135 string characters out of 6180977
  941714 words of memory out of 5000000
- 33143 multiletter control sequences out of 15000+600000
+ 33137 multiletter control sequences out of 15000+600000
  15423 words of font info for 56 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  71i,13n,95p,1758b,748s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1485,10 +1472,10 @@ ts/type1/public/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmssi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
 blic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
 msfonts/symbols/msbm10.pfb>
-Output written on presentation.pdf (32 pages, 400458 bytes).
+Output written on presentation.pdf (31 pages, 344745 bytes).
 PDF statistics:
- 305 PDF objects out of 1000 (max. 8388607)
- 240 compressed objects within 3 object streams
- 78 named destinations out of 1000 (max. 500000)
- 108 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 297 PDF objects out of 1000 (max. 8388607)
+ 235 compressed objects within 3 object streams
+ 76 named destinations out of 1000 (max. 500000)
+ 103 words of extra memory for PDF output out of 10000 (max. 10000000)
 
