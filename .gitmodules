@@ -7,3 +7,15 @@
 [submodule "COMP767/Assignments/markov-decision-processes-mdp-madness"]
 	path = COMP767/Assignments/markov-decision-processes-mdp-madness
 	url = git@github.com:MattScicluna/markov-decision-processes-mdp-madness.git
+[submodule "COMP767/Assignments/planning-temporal-abstraction-the-dynasty"]
+	path = COMP767/Assignments/planning-temporal-abstraction-the-dynasty
+	url = git@github.com:MattScicluna/planning-temporal-abstraction-the-dynasty.git
+[submodule "COMP767/Assignments/policy-gradient-methods-there-are-too-many-of-these"]
+	path = COMP767/Assignments/policy-gradient-methods-there-are-too-many-of-these
+	url = git@github.com:MattScicluna/policy-gradient-methods-there-are-too-many-of-these.git
+[submodule "COMP767/project/gym-duckietown"]
+	path = COMP767/project/gym-duckietown
+	url = git@github.com:MattScicluna/gym-duckietown.git
+[submodule "IFT6269/IFT6269-Final-Project"]
+	path = IFT6269/IFT6269-Final-Project
+	url = git@github.com:MattScicluna/IFT6269-Final-Project.git
