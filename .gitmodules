@@ -23,3 +23,12 @@
 	path = IFT6085/IFT6085-Paper-Presentation
 	url = git@github.com:MattScicluna/IFT6085-Paper-Presentation.git
 
+[submodule "IFT6135/IFT6135-A3"]
+	path = IFT6135/IFT6135-A3
+	url = git@github.com:MattScicluna/IFT6135-A3.git
+[submodule "IFT6135/memoryGAN"]
+	path = IFT6135/memoryGAN
+	url = git@github.com:MattScicluna/memoryGAN.git
+[submodule "IFT6135/IFT6135-Assignment-4"]
+	path = IFT6135/IFT6135-Assignment-4
+	url = git@github.com:MattScicluna/IFT6135-Assignment-4.git
