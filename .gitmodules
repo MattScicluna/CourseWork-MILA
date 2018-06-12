@@ -1,0 +1,3 @@
+[submodule "COMP767/Assignments/function-approximation-in-rl-fun-approx-is-cool"]
+	path = COMP767/Assignments/function-approximation-in-rl-fun-approx-is-cool
+	url = git@github.com:MattScicluna/function-approximation-in-rl-fun-approx-is-cool.git
