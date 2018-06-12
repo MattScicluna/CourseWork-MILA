@@ -32,3 +32,9 @@
 [submodule "IFT6135/IFT6135-Assignment-4"]
 	path = IFT6135/IFT6135-Assignment-4
 	url = git@github.com:MattScicluna/IFT6135-Assignment-4.git
+[submodule "IFT6135/IFT6135-Assignment-2"]
+	path = IFT6135/IFT6135-Assignment-2
+	url = git@github.com:MattScicluna/IFT6135-Assignment-2.git
+[submodule "IFT6135/IFT6135-Assignment-1"]
+	path = IFT6135/IFT6135-Assignment-1
+	url = git@github.com:MattScicluna/IFT6135-Assignment-1.git
