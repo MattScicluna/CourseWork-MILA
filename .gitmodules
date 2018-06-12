@@ -1,3 +1,9 @@
 [submodule "COMP767/Assignments/function-approximation-in-rl-fun-approx-is-cool"]
 	path = COMP767/Assignments/function-approximation-in-rl-fun-approx-is-cool
 	url = git@github.com:MattScicluna/function-approximation-in-rl-fun-approx-is-cool.git
+[submodule "COMP767/Assignments/gvfs-and-sr-last_assignment"]
+	path = COMP767/Assignments/gvfs-and-sr-last_assignment
+	url = git@github.com:MattScicluna/gvfs-and-sr-last_assignment.git
+[submodule "COMP767/Assignments/markov-decision-processes-mdp-madness"]
+	path = COMP767/Assignments/markov-decision-processes-mdp-madness
+	url = git@github.com:MattScicluna/markov-decision-processes-mdp-madness.git
