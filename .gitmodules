@@ -19,3 +19,9 @@
 [submodule "IFT6269/IFT6269-Final-Project"]
 	path = IFT6269/IFT6269-Final-Project
 	url = git@github.com:MattScicluna/IFT6269-Final-Project.git
+[submodule "IFT6085-Paper-Presentation"]
+	path = IFT6085-Paper-Presentation
+	url = git@github.com:MattScicluna/IFT6085-Paper-Presentation.git
+[submodule "IFT6085/IFT6085-Paper-Presentation"]
+	path = IFT6085/IFT6085-Paper-Presentation
+	url = git@github.com:MattScicluna/IFT6085-Paper-Presentation.git
